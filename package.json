@@ -1,0 +1,23 @@
+{
+  "name": "protractor-pull-a-part",
+  "version": "1.0.0",
+  "description": "nothing to see here",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cnishina/protractor-pull-a-part.git"
+  },
+  "author": "Craig Nishina <craig.nishina@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cnishina/protractor-pull-a-part/issues"
+  },
+  "homepage": "https://github.com/cnishina/protractor-pull-a-part#readme",
+  "dependencies": {
+    "selenium-webdriver": "^4.0.0-alpha.1",
+    "webdriver-manager-replacement": "^0.5.1"
+  }
+}

@@ -4,7 +4,10 @@
   "description": "nothing to see here",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test-int": "tsc && jasmine JASMINE_CONFIG_PATH=spec/jasmine-int.json",
+    "test-unit": "tsc && jasmine JASMINE_CONFIG_PATH=spec/jasmine-unit.json",
+    "tsc": "tsc",
+    "wdm": "webdriver-manager-replacement"
   },
   "repository": {
     "type": "git",
@@ -17,7 +20,18 @@
   },
   "homepage": "https://github.com/cnishina/protractor-pull-a-part#readme",
   "dependencies": {
+    "loglevel": "^1.6.1",
     "selenium-webdriver": "^4.0.0-alpha.1",
     "webdriver-manager-replacement": "^0.5.1"
+  },
+  "devDependencies": {
+    "@types/jasmine": "^2.8.8",
+    "@types/loglevel": "^1.5.3",
+    "@types/node": "^10.9.4",
+    "@types/request": "^2.47.1",
+    "@types/selenium-webdriver": "^3.0.10",
+    "jasmine": "^3.2.0",
+    "request": "^2.88.0",
+    "typescript": "^3.0.3"
   }
 }

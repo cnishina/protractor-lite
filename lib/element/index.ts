@@ -1,7 +1,7 @@
 import {promise, WebElement} from 'selenium-webdriver';
 import {Browser} from '../browser';
-import {ElementArrayFinder} from './element_array_finder';
-import {ElementFinder} from './element_finder';
+import {ElementArrayFinder, elementArrayFinderFactory} from './element_array_finder';
+import {ElementFinder, elementFinderFactory} from './element_finder';
 import {Locator} from '../locator';
 
 /**
@@ -39,10 +39,10 @@ export interface ElementHelper extends Function {
  */
 export function buildElementHelper(browser: Browser): ElementHelper {
   let element: ElementHelper = (locator: Locator): ElementFinder => {
-    return ElementFinder.generate(browser, locator);
+    return elementFinderFactory(browser, locator);
   }
   element['all'] = (locator: Locator): ElementArrayFinder => {
-    return ElementArrayFinder.generate(browser, locator);
+    return elementArrayFinderFactory(browser, locator);
   }
   return element;
 }

@@ -12,14 +12,17 @@ describe('index', () => {
     browserName: 'chrome',
     chromeOptions: {
       args: ['--headless']
-    }
+    },
   };
   let browser: Browser;
   const wdmOptions = wdm.initOptions(
     [wdm.Provider.ChromeDriver, wdm.Provider.Selenium], true);
 
+  beforeAll(() => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
+  });
+
   beforeAll(async() => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
     await wdm.update(wdmOptions);
     await wdm.start(wdmOptions);
   });

@@ -6,15 +6,20 @@ import {requestBody} from '../spec/support/http_utils';
 log.setLevel('info');
 
 describe('browser', () => {
+  const origTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
   const capabilities = {
     browserName: 'chrome',
     chromeOptions: {
       args: ['--headless']
-    }
+    },
   };
 
   const wdmOptions = wdm.initOptions(
     [wdm.Provider.ChromeDriver, wdm.Provider.Selenium], true);
+  
+  beforeAll(() => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
+  });
 
   beforeAll(async() => {
     await wdm.update(wdmOptions);
@@ -23,6 +28,7 @@ describe('browser', () => {
 
   afterAll(async() => {
     await wdm.shutdown(wdmOptions);
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = origTimeout;
   });
 
   describe('start and stop', () => {

@@ -30,7 +30,7 @@ export class Browser {
   }
 
   /**
-   * Navigates to thsi url.
+   * Navigates to the url.
    * @param url
    * @param waitStrategy Try to execute this wait function.
    */

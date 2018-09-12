@@ -4,6 +4,7 @@
   "description": "nothing to see here",
   "main": "index.js",
   "scripts": {
+    "http-server": "tsc && node dist/spec/server/http_server.js",
     "test-int": "tsc && jasmine JASMINE_CONFIG_PATH=spec/jasmine-int.json",
     "test-unit": "tsc && jasmine JASMINE_CONFIG_PATH=spec/jasmine-unit.json",
     "tsc": "tsc",

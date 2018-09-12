@@ -1,73 +1,97 @@
 import * as log from 'loglevel';
 import * as wdm from 'webdriver-manager-replacement';
+import {ChildProcess} from 'child_process';
 import {By} from 'selenium-webdriver';
 import {Browser} from '../browser';
-import {ElementFinder } from './element_finder';
-
+import {elementFinderFactory} from './element_finder';
+import {spawnProcess} from '../../spec/support/test_utils';
+import * as env from '../../spec/server/env';
 
 log.setLevel('info');
 
-describe('ElementArrayFinder', () => {
+describe('element_finder', () => {
   const origTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
   const capabilities = {
     browserName: 'chrome',
     chromeOptions: {
       args: ['--headless']
-    }
+    },
   };
   let browser: Browser;
   const wdmOptions = wdm.initOptions(
     [wdm.Provider.ChromeDriver, wdm.Provider.Selenium], true);
 
+  let proc: ChildProcess;
+
+  beforeAll(() => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
+  });
+
   beforeAll(async() => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+    proc = spawnProcess('node', ['dist/spec/server/http_server.js']);
+    log.info('http-server: ' + proc.pid);
     await wdm.update(wdmOptions);
     await wdm.start(wdmOptions);
+    await new Promise((resolve, _) => {
+      setTimeout(resolve, 1000);
+    });
   });
 
   afterAll(async() => {
     await wdm.shutdown(wdmOptions);
+    process.kill(proc.pid);
+    await new Promise((resolve, _) => {
+      setTimeout(resolve, 1000);
+    });
     jasmine.DEFAULT_TIMEOUT_INTERVAL = origTimeout;
   });
 
-  describe('generate', () => {
+  beforeEach(async () => {
+    browser = new Browser(capabilities);
+    await browser.start();
+  });
 
-    describe('when browsing to the page', () => {
-      beforeAll(async () => {
-        browser = new Browser(capabilities);
-        await browser.start();
-        await browser.driver.get('https://github.com');
-      });
+  afterEach(async() => {
+    await browser.quit();
+  });
 
-      afterAll(async () => {
-        await browser.quit();
-      });
+  describe('elementFinderFactory', () => {
+    it('should create a an elementFinder object', () => {
+      const elementFinder = elementFinderFactory(browser, By.css('.foo'));
+      expect(elementFinder).not.toBeNull();
+      expect(elementFinder.constructor.name).toBe('ElementFinder');
+    });
+  });
 
-      let invertocats: ElementFinder;
-      it('should create a promise for all elements', () => {
-        invertocats = ElementFinder.generate(browser,
-          By.css('.header-logo-invertocat'));
-        expect(invertocats).not.toBeNull();
+  describe('ElementFinder', () => {
+    describe('click', () => {
+      it('should click a link', async () => {
+        const elementFinder = elementFinderFactory(browser, By.css('.foo'));
+        await browser.get(`${env.httpBaseUrl}/spec/website/html/page1.html`);
+        await elementFinder.click();
+        let currentUrl = await browser.getCurrentUrl();
+        expect(currentUrl).toBe(
+          `${env.httpBaseUrl}/spec/website/html/page2.html`);
       });
     });
 
-    describe('when browser session exists, but not on page', () => {
-      let invertocats: ElementFinder;
-
-      beforeAll(async () => {
-        browser = new Browser(capabilities);
-        await browser.start();
-        invertocats = ElementFinder.generate(browser,
-          By.css('.header-logo-invertocat'));
+    describe('getText', () => {
+      it('should get the contents of the html tag', async () => {
+        const elementFinder = elementFinderFactory(browser, By.css('.foo'));
+        await browser.get(`${env.httpBaseUrl}/spec/website/html/page1.html`);
+        expect(await elementFinder.getText()).toBe('nav to page2');
       });
+    });
 
-      afterAll(async () => {
-        await browser.quit();
-      });
-
-      it('should find an element', async () => {
-        await browser.driver.get('https://github.com');
-        expect(invertocats).not.toBeNull();
+    describe('sendKeys and getAttribute', () => {
+      it('should get the contents of the html tag', async () => {
+        const elementFinder = elementFinderFactory(browser, By.css('.bar'));
+        await browser.get(`${env.httpBaseUrl}/spec/website/html/page1.html`);
+        let placerHolder = await elementFinder.getAttribute('value');
+        expect(placerHolder).toBe('');
+        await elementFinder.sendKeys('foo bar baz');
+        let value = await elementFinder.getAttribute('value');
+        expect(value).toBe('foo bar baz');
       });
     });
   });

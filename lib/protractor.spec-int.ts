@@ -21,6 +21,8 @@ const {browser, element} = build(config);
 const origTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
 let proc: ChildProcess;
 
+const page1 = `${env.httpBaseUrl}/spec/website/html/page1.html`;
+const page2 = `${env.httpBaseUrl}/spec/website/html/page2.html`;
 
 describe('protractor', () => {
   beforeAll(() => {
@@ -52,12 +54,12 @@ describe('protractor', () => {
     });
 
     it('should run a protractor test', async () => {
-      await browser.get(`${env.httpBaseUrl}/spec/website/html/page1.html`);
-      const foo = element(By.css('.foo'));
-      expect(await foo.getText()).toBe('nav to page2');
-      await foo.click();
+      await browser.get(page1);
+      const navPage2 = element(By.css('.nav-page2'));
+      expect(await navPage2.getText()).toBe('nav to page2');
+      await navPage2.click();
       const currentUrl = await browser.getCurrentUrl();
-      expect(currentUrl).toBe(`${env.httpBaseUrl}/spec/website/html/page2.html`);
+      expect(currentUrl).toBe(page2);
     });
   });
 });

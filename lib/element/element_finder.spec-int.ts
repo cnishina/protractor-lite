@@ -112,6 +112,42 @@ describe('element_finder', () => {
       });
     });
 
+    describe('isDisplayed', () => {
+      it('should check if the spans are visible', async () => {
+        const spanHidden = elementFinderFactory(
+          browser, By.css('.span-hidden'));
+        const spanVisible = elementFinderFactory(
+          browser, By.css('.span-visible'));
+        await browser.get(page1);
+        expect(await spanHidden.isDisplayed()).toBeFalsy();
+        expect(await spanVisible.isDisplayed()).toBeTruthy();
+      });
+    });
+
+    describe('isEnabled', () => {
+      it('should check if the buttons are enabled', async () => {
+        const buttonDisabled = elementFinderFactory(
+          browser, By.css('.button-disabled'));
+        const buttonEnabled = elementFinderFactory(
+          browser, By.css('.button-enabled'));
+        await browser.get(page1);
+        expect(await buttonDisabled.isEnabled()).toBeFalsy();
+        expect(await buttonEnabled.isEnabled()).toBeTruthy();
+      });
+    });
+
+    describe('isSelected', () => {
+      it('should check if the checkboxes are selected', async () => {
+        const checkboxNotSelected = elementFinderFactory(
+          browser, By.css('.checkbox-not-selected'));
+        const checkboxSelected = elementFinderFactory(
+          browser, By.css('.checkbox-selected'));
+        await browser.get(page1);
+        expect(await checkboxNotSelected.isSelected()).toBeFalsy();
+        expect(await checkboxSelected.isSelected()).toBeTruthy();
+      });
+    });
+
     describe('sendKeys', () => {
       it('should get the contents of the html tag', async () => {
         const inputEmpty = elementFinderFactory(

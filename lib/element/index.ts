@@ -1,6 +1,6 @@
 import {promise, WebElement} from 'selenium-webdriver';
 import {Browser} from '../browser';
-import {ElementArrayFinder, elementArrayFinderFactory} from './element_array_finder';
+import {ElementArrayFinder, elementArrayFinderFactory} from './all/element_array_finder';
 import {ElementFinder, elementFinderFactory} from './element_finder';
 import {Locator} from '../by/locator';
 

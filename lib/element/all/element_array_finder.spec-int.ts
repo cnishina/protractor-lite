@@ -2,10 +2,10 @@ import * as log from 'loglevel';
 import * as wdm from 'webdriver-manager-replacement';
 import {ChildProcess} from 'child_process';
 import {By} from 'selenium-webdriver';
-import {Browser} from '../browser';
+import {Browser} from '../../browser';
 import {elementArrayFinderFactory} from './element_array_finder';
-import {spawnProcess} from '../../spec/support/test_utils';
-import * as env from '../../spec/server/env';
+import {spawnProcess} from '../../../spec/support/test_utils';
+import * as env from '../../../spec/server/env';
 
 log.setLevel('info');
 const page2 = `${env.httpBaseUrl}/spec/website/html/page2.html`;

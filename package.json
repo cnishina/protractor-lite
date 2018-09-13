@@ -6,6 +6,7 @@
   "scripts": {
     "http-server": "tsc && node dist/spec/server/http_server.js",
     "test-int": "tsc && jasmine JASMINE_CONFIG_PATH=spec/jasmine-int.json",
+    "test-types": "tsc && jasmine JASMINE_CONFIG_PATH=spec/jasmine-types.json",
     "test-unit": "tsc && jasmine JASMINE_CONFIG_PATH=spec/jasmine-unit.json",
     "tsc": "tsc",
     "wdm": "webdriver-manager-replacement"

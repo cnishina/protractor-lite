@@ -8,11 +8,11 @@ export function elementFinderFactory(
     browser: Browser,
     locator: Locator): ElementFinder {
   let getWebElements: GetWebElements = (): promise.Promise<WebElement[]> => {
-    if (!isProtractorLocator(locator)) {
+    if (isProtractorLocator(locator)) {
+      return locator.findElementsOverride(browser.driver, null, browser.rootEl);
+    } else {
       return browser.driver.findElements(locator);
     }
-    // TODO(cnishina): when it is a protractor locator, we should do something.
-    return null;
   }
   return new ElementFinder(browser, locator, getWebElements);
 }

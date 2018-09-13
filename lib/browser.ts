@@ -5,6 +5,8 @@ export class Browser {
   seleniumAddress = 'http://127.0.0.1:4444/wd/hub';
   driver: WebDriver;
   session: Session;
+  // TODO(cnishina): implement later?
+  rootEl: any;
 
   constructor(
     public capabilities: Object,

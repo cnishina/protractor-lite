@@ -14,24 +14,6 @@ export class Browser {
   }
 
   /**
-   * Start a browser with capabilities using a selenium address.
-   */
-  async start(): Promise<void> {
-    const builder = new Builder()
-      .usingServer(this.seleniumAddress)
-      .withCapabilities(this.capabilities);
-    this.driver = await builder.build();
-    this.session = await this.driver.getSession();
-  }
-
-  /**
-   * Quits this browser session.
-   */
-  async quit(): Promise<void> {
-    await this.driver.quit();
-  }
-
-  /**
    * Navigates to the url.
    * @param url
    * @param waitStrategy Try to execute this wait function.
@@ -59,5 +41,23 @@ export class Browser {
     await wait(this.defaultWaitStrategy, waitStrategy);
     let title = await this.driver.getTitle();
     return title;
+  }
+
+  /**
+   * Start a browser with capabilities using a selenium address.
+   */
+  async start(): Promise<void> {
+    const builder = new Builder()
+      .usingServer(this.seleniumAddress)
+      .withCapabilities(this.capabilities);
+    this.driver = await builder.build();
+    this.session = await this.driver.getSession();
+  }
+
+  /**
+   * Quits this browser session.
+   */
+  async quit(): Promise<void> {
+    await this.driver.quit();
   }
 }

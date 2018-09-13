@@ -36,14 +36,17 @@ export class ElementFinder {
   }
 
   /**
-   * Send keys to the input field.
-   * @param keys
+   * Gets the value of the provided attribute name.
+   * @param attributeName
    * @param waitStrategy
    */
-  async sendKeys(keys: string|number, waitStrategy?: string): Promise<void> {
+  async getAttribute(
+      attributeName: string,
+      waitStrategy?: string): Promise<string> {
     await wait(this.browser.defaultWaitStrategy, waitStrategy);
     let webElements = await this.getWebElements();
-    await webElements[0].sendKeys(keys);
+    let text = await webElements[0].getAttribute(attributeName);
+    return text;
   }
 
   /**
@@ -58,17 +61,13 @@ export class ElementFinder {
   }
 
   /**
-   * Gets the value of the provided attribute name.
-   * @param attributeName
+   * Send keys to the input field.
+   * @param keys
    * @param waitStrategy
    */
-  async getAttribute(
-      attributeName: string,
-      waitStrategy?: string): Promise<string> {
+  async sendKeys(keys: string|number, waitStrategy?: string): Promise<void> {
     await wait(this.browser.defaultWaitStrategy, waitStrategy);
     let webElements = await this.getWebElements();
-    let text = await webElements[0].getAttribute(attributeName);
-    return text;
+    await webElements[0].sendKeys(keys);
   }
-
 }

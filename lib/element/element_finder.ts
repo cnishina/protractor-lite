@@ -71,6 +71,39 @@ export class ElementFinder {
   }
 
   /**
+   * Whether the element is displayed.
+   * @param waitStrategy
+   */
+  async isDisplayed(waitStrategy?: string): Promise<boolean> {
+    await wait(this.browser.defaultWaitStrategy, waitStrategy);
+    let webElements = await this.getWebElements();
+    let result = await webElements[0].isDisplayed();
+    return result;
+  }
+
+  /**
+   * Whether the web element is enabled.
+   * @param waitStrategy
+   */
+  async isEnabled(waitStrategy?: string): Promise<boolean> {
+    await wait(this.browser.defaultWaitStrategy, waitStrategy);
+    let webElements = await this.getWebElements();
+    let result = await webElements[0].isEnabled();
+    return result;
+  }
+
+  /**
+   * Whether the element is currently selected.
+   * @param waitStrategy
+   */
+  async isSelected(waitStrategy?: string): Promise<boolean> {
+    await wait(this.browser.defaultWaitStrategy, waitStrategy);
+    let webElements = await this.getWebElements();
+    let result = await webElements[0].isSelected();
+    return result;
+  }
+
+  /**
    * Send keys to the input field.
    * @param keys
    * @param waitStrategy

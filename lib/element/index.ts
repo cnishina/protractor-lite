@@ -2,7 +2,7 @@ import {promise, WebElement} from 'selenium-webdriver';
 import {Browser} from '../browser';
 import {ElementArrayFinder, elementArrayFinderFactory} from './element_array_finder';
 import {ElementFinder, elementFinderFactory} from './element_finder';
-import {Locator} from '../locator';
+import {Locator} from '../by/locator';
 
 /**
  * The interface for the GetWebElements method.

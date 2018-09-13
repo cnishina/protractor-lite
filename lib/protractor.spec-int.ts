@@ -31,7 +31,7 @@ describe('protractor', () => {
   });
 
   describe('an example', () => {
-    beforeAll(async () => {  
+    beforeAll(async () => {
       proc = spawnProcess('node', ['dist/spec/server/http_server.js']);
       log.debug('http-server: ' + proc.pid);
       await wdm.update(wdmOptions);
@@ -41,7 +41,7 @@ describe('protractor', () => {
         setTimeout(resolve, 1000);
       });
     });
-  
+
     afterAll(async () => {
       await browser.quit();
       await wdm.shutdown(wdmOptions);

@@ -1,10 +1,11 @@
 import {Builder, WebDriver, Session} from 'selenium-webdriver';
-import {wait} from './wait';
+import {wait} from '../wait';
 
 export class Browser {
   seleniumAddress = 'http://127.0.0.1:4444/wd/hub';
   driver: WebDriver;
   session: Session;
+
   // TODO(cnishina): implement later?
   rootEl: any;
 

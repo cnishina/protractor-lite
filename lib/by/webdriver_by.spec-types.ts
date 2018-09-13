@@ -1,4 +1,7 @@
 import {By} from 'selenium-webdriver';
+import * as log from 'loglevel';
+
+log.setLevel('debug');
 
 const BY = {
   staticFunctions: [
@@ -17,7 +20,10 @@ describe('webdriver_by', () => {
   it('should have a static functions', () => {
     for (const pos in BY.staticFunctions) {
       const func = BY.staticFunctions[pos];
-      expect(typeof By[func] == 'function').toBe(true);
+      if (typeof By[func] !== 'function') {
+        log.error(`requires review: ${func}`);
+      }
+      expect(typeof By[func] === 'function').toBe(true);
     }
   });
 });

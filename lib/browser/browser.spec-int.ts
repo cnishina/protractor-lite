@@ -1,7 +1,7 @@
 import * as log from 'loglevel';
 import * as wdm from 'webdriver-manager-replacement';
 import {Browser} from './browser';
-import {requestBody} from '../spec/support/http_utils';
+import {requestBody} from '../../spec/support/http_utils';
 
 log.setLevel('info');
 

@@ -8,6 +8,8 @@ import {spawnProcess} from '../../spec/support/test_utils';
 import * as env from '../../spec/server/env';
 
 log.setLevel('info');
+const page1 = `${env.httpBaseUrl}/spec/website/html/page1.html`;
+const page2 = `${env.httpBaseUrl}/spec/website/html/page2.html`;
 
 describe('element_finder', () => {
   const origTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
@@ -64,33 +66,59 @@ describe('element_finder', () => {
   });
 
   describe('ElementFinder', () => {
+    describe('clear', () => {
+      it('should clear the input', async () => {
+        const inputEmpty = elementFinderFactory(
+          browser, By.css('.input-empty'));
+        const inputValue = elementFinderFactory(
+          browser, By.css('.input-value'));
+        await browser.get(page1);
+        await inputEmpty.clear();
+        await inputValue.clear();
+        expect(await inputEmpty.getAttribute('value')).toBe('');
+        expect(await inputValue.getAttribute('value')).toBe('');
+      });
+    });
+
     describe('click', () => {
       it('should click a link', async () => {
-        const elementFinder = elementFinderFactory(browser, By.css('.foo'));
-        await browser.get(`${env.httpBaseUrl}/spec/website/html/page1.html`);
-        await elementFinder.click();
+        const navPage2 = elementFinderFactory(
+          browser, By.css('.nav-page2'));
+        await browser.get(page1);
+        await navPage2.click();
         let currentUrl = await browser.getCurrentUrl();
-        expect(currentUrl).toBe(
-          `${env.httpBaseUrl}/spec/website/html/page2.html`);
+        expect(currentUrl).toBe(page2);
+      });
+    });
+
+    describe('getAttribute', () => {
+      it('should get the contents from the input tag', async () => {
+        const inputEmpty = elementFinderFactory(
+          browser, By.css('.input-empty'));
+        const inputValue = elementFinderFactory(
+          browser, By.css('.input-value'));
+        await browser.get(page1);
+        expect(await inputEmpty.getAttribute('value')).toBe('');
+        expect(await inputValue.getAttribute('value')).toBe('foobar');
       });
     });
 
     describe('getText', () => {
       it('should get the contents of the html tag', async () => {
-        const elementFinder = elementFinderFactory(browser, By.css('.foo'));
-        await browser.get(`${env.httpBaseUrl}/spec/website/html/page1.html`);
-        expect(await elementFinder.getText()).toBe('nav to page2');
+        const navPage2 = elementFinderFactory(
+          browser, By.css('.nav-page2'));
+        await browser.get(page1);
+        expect(await navPage2.getText()).toBe('nav to page2');
       });
     });
 
-    describe('sendKeys and getAttribute', () => {
+    describe('sendKeys', () => {
       it('should get the contents of the html tag', async () => {
-        const elementFinder = elementFinderFactory(browser, By.css('.bar'));
-        await browser.get(`${env.httpBaseUrl}/spec/website/html/page1.html`);
-        let placerHolder = await elementFinder.getAttribute('value');
-        expect(placerHolder).toBe('');
-        await elementFinder.sendKeys('foo bar baz');
-        let value = await elementFinder.getAttribute('value');
+        const inputEmpty = elementFinderFactory(
+          browser, By.css('.input-empty'));
+        await browser.get(page1);
+        await inputEmpty.sendKeys('foo bar baz');
+        let value = await inputEmpty.getAttribute('value');
         expect(value).toBe('foo bar baz');
       });
     });

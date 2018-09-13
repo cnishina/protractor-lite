@@ -26,6 +26,16 @@ export class ElementFinder {
   }
 
   /**
+   * Clears the text from an input or textarea web element.
+   * @param waitStrategy
+   */
+  async clear(waitStrategy?: string): Promise<void> {
+    await wait(this.browser.defaultWaitStrategy, waitStrategy);
+    let webElements = await this.getWebElements();
+    await webElements[0].clear();
+  }
+
+  /**
    * Clicks on a web element.
    * @param waitStrategy
    */

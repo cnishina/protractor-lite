@@ -16,7 +16,7 @@ describe('browser', () => {
 
   const wdmOptions = wdm.initOptions(
     [wdm.Provider.ChromeDriver, wdm.Provider.Selenium], true);
-  
+
   beforeAll(() => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
   });
@@ -33,24 +33,25 @@ describe('browser', () => {
 
   describe('start and stop', () => {
     let browser = new Browser(capabilities);
+    let wdSessions = 'http://127.0.0.1:4444/wd/hub/sessions';
 
     it('should start a browser session', async() => {
-      let body = await requestBody('http://127.0.0.1:4444/wd/hub/sessions', {});
+      let body = await requestBody(wdSessions, {});
       expect(JSON.parse(body)['value'].length).toBe(0);
 
       await browser.start();
 
-      body = await requestBody('http://127.0.0.1:4444/wd/hub/sessions', {});
+      body = await requestBody(wdSessions, {});
       expect(JSON.parse(body)['value'].length).toBe(1);
     });
 
     it('should stop a browser', async() => {
-      let body = await requestBody('http://127.0.0.1:4444/wd/hub/sessions', {});
+      let body = await requestBody(wdSessions, {});
       expect(JSON.parse(body)['value'].length).toBe(1);
 
       await browser.quit();
 
-      body = await requestBody('http://127.0.0.1:4444/wd/hub/sessions', {});
+      body = await requestBody(wdSessions, {});
       expect(JSON.parse(body)['value'].length).toBe(0);
     });
   });

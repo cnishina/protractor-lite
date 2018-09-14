@@ -5,6 +5,7 @@ import * as url from 'url';
 
 import * as env from './env';
 
+process.setMaxListeners(20);
 const port = process.argv[2] || env.httpPort;
 
 http.createServer(

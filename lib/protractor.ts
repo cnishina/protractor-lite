@@ -6,7 +6,7 @@ import {buildElementHelper} from './element';
  * @param config A configuration object with a capabilities property.
  */
 export function build(config) {
-  let browser = new Browser(config.capabilities);
+  let browser = new Browser(config);
   let element = buildElementHelper(browser);
   return {
     browser,

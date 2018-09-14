@@ -1,5 +1,4 @@
 import * as log from 'loglevel';
-import * as wdm from 'webdriver-manager-replacement';
 import {ChildProcess} from 'child_process';
 import {By} from 'selenium-webdriver';
 import {build} from './protractor';
@@ -14,9 +13,7 @@ const capabilities = {
     args: ['--headless']
   },
 };
-const config = {capabilities};
-const wdmOptions = wdm.initOptions(
-  [wdm.Provider.ChromeDriver, wdm.Provider.Selenium], true);
+const config = {capabilities, directConnect: true};
 const {browser, element} = build(config);
 const origTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
 let proc: ChildProcess;
@@ -36,8 +33,6 @@ describe('protractor', () => {
     beforeAll(async () => {
       proc = spawnProcess('node', ['dist/spec/server/http_server.js']);
       log.debug('http-server: ' + proc.pid);
-      await wdm.update(wdmOptions);
-      await wdm.start(wdmOptions);
       await browser.start();
       await new Promise((resolve, _) => {
         setTimeout(resolve, 1000);
@@ -46,7 +41,6 @@ describe('protractor', () => {
 
     afterAll(async () => {
       await browser.quit();
-      await wdm.shutdown(wdmOptions);
       process.kill(proc.pid);
       await new Promise((resolve, _) => {
         setTimeout(resolve, 1000);

@@ -3,6 +3,9 @@
   "spec_files": [
     "**/*.spec-int.js"
   ],
+  "helpers": [
+    "**/helper/wdm_update.js"
+  ],
   "stopSpecOnExpectationFailure": false,
   "random": false
 }

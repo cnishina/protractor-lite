@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "http-server": "tsc && node dist/spec/server/http_server.js",
+    "test": "npm run test-unit && npm run test-types && npm run test-int",
     "test-int": "tsc && jasmine JASMINE_CONFIG_PATH=spec/jasmine-int.json",
     "test-types": "tsc && jasmine JASMINE_CONFIG_PATH=spec/jasmine-types.json",
     "test-unit": "tsc && jasmine JASMINE_CONFIG_PATH=spec/jasmine-unit.json",
@@ -24,7 +25,7 @@
   "dependencies": {
     "loglevel": "^1.6.1",
     "selenium-webdriver": "^4.0.0-alpha.1",
-    "webdriver-manager-replacement": "^0.5.1"
+    "webdriver-manager-replacement": "^1.0.1"
   },
   "devDependencies": {
     "@types/jasmine": "^2.8.8",
@@ -34,6 +35,7 @@
     "@types/selenium-webdriver": "^3.0.10",
     "jasmine": "^3.2.0",
     "request": "^2.88.0",
+    "ts-node": "^7.0.1",
     "typescript": "^3.0.3"
   }
 }

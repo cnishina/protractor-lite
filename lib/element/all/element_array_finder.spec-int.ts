@@ -1,5 +1,4 @@
 import * as log from 'loglevel';
-import * as wdm from 'webdriver-manager-replacement';
 import {ChildProcess} from 'child_process';
 import {By} from 'selenium-webdriver';
 import {Browser} from '../../browser';
@@ -15,13 +14,10 @@ describe('element_array_finder', () => {
   const capabilities = {
     browserName: 'chrome',
     chromeOptions: {
-      args: ['--headless']
+      args: ['--headless', '--disable-gpu']
     }
   };
   let browser: Browser;
-  const wdmOptions = wdm.initOptions(
-    [wdm.Provider.ChromeDriver, wdm.Provider.Selenium], true);
-
   let proc: ChildProcess;
 
   beforeAll(() => {
@@ -31,29 +27,20 @@ describe('element_array_finder', () => {
   beforeAll(async() => {
     proc = spawnProcess('node', ['dist/spec/server/http_server.js']);
     log.debug('http-server: ' + proc.pid);
-    await wdm.update(wdmOptions);
-    await wdm.start(wdmOptions);
     await new Promise((resolve, _) => {
       setTimeout(resolve, 1000);
     });
+    browser = new Browser({capabilities, directConnect: true});
+    await browser.start();
   });
 
-  afterAll(async() => {
-    await wdm.shutdown(wdmOptions);
+  afterAll(async () => {
+    await browser.quit();
     process.kill(proc.pid);
     await new Promise((resolve, _) => {
       setTimeout(resolve, 1000);
     });
     jasmine.DEFAULT_TIMEOUT_INTERVAL = origTimeout;
-  });
-
-  beforeEach(async () => {
-    browser = new Browser(capabilities);
-    await browser.start();
-  });
-
-  afterEach(async() => {
-    await browser.quit();
   });
 
   describe('elementArrayFinderFactory', () => {

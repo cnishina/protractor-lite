@@ -1,4 +1,6 @@
 import {Builder, WebDriver, Session} from 'selenium-webdriver';
+import {BrowserConfig} from './browser_config';
+import {DirectConnect} from './driver_provider';
 import {wait} from '../wait';
 
 export class Browser {
@@ -10,7 +12,7 @@ export class Browser {
   rootEl: any;
 
   constructor(
-    public capabilities: Object,
+    public browserConfig?: BrowserConfig,
     public defaultWaitStrategy?: string) {
   }
 
@@ -48,10 +50,14 @@ export class Browser {
    * Start a browser with capabilities using a selenium address.
    */
   async start(): Promise<void> {
-    const builder = new Builder()
-      .usingServer(this.seleniumAddress)
-      .withCapabilities(this.capabilities);
-    this.driver = await builder.build();
+    if (this.browserConfig.directConnect) {
+      this.driver = DirectConnect.getDriver(this.browserConfig);
+    } else {
+      const builder = new Builder()
+        .usingServer(this.seleniumAddress)
+        .withCapabilities(this.browserConfig.capabilities);
+      this.driver = await builder.build();
+    }
     this.session = await this.driver.getSession();
   }
 

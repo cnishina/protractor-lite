@@ -14,7 +14,7 @@ describe('element_array_finder', () => {
   const capabilities = {
     browserName: 'chrome',
     chromeOptions: {
-      args: ['--headless', '--disable-gpu']
+      args: ['--headless', '--disable-gpu', '--noSandbox']
     }
   };
   let browser: Browser;

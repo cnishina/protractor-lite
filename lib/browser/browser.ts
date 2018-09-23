@@ -4,7 +4,6 @@ import {DirectConnect} from './driver_provider';
 import {wait} from '../wait';
 
 export class Browser {
-  seleniumAddress = 'http://127.0.0.1:4444/wd/hub';
   driver: WebDriver;
   session: Session;
 
@@ -53,8 +52,9 @@ export class Browser {
     if (this.browserConfig.directConnect) {
       this.driver = DirectConnect.getDriver(this.browserConfig);
     } else {
+      // TODO(cnishina): remove this use something from driver_provider
       const builder = new Builder()
-        .usingServer(this.seleniumAddress)
+        .usingServer(this.browserConfig.seleniumAddress)
         .withCapabilities(this.browserConfig.capabilities);
       this.driver = await builder.build();
     }

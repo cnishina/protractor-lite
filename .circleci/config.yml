@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/workspace
     docker:
-      - image: circleci/node:8-browsers
+      - image: circleci/node:9-browsers
     steps:
       - checkout
 
@@ -11,6 +11,8 @@ jobs:
       - run: npm --version
 
       - run: npm install
+      - run: npm run tsc
+      - run: npm run wdm-update
       - run: npm run test-types
       - run: npm run test-unit
       - run: npm run test-int

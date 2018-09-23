@@ -1,11 +1,9 @@
 {
-  "spec_dir": "dist",
+  "spec_dir": "dist/",
   "spec_files": [
     "**/*.spec-int.js"
   ],
-  "helpers": [
-    "**/helper/wdm_update.js"
-  ],
+  "helpers": [],
   "stopSpecOnExpectationFailure": false,
   "random": false
 }

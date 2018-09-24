@@ -10,7 +10,8 @@
     "test-types": "tsc && jasmine JASMINE_CONFIG_PATH=spec/jasmine-types.json",
     "test-unit": "tsc && jasmine JASMINE_CONFIG_PATH=spec/jasmine-unit.json",
     "tsc": "tsc",
-    "wdm": "webdriver-manager-replacement"
+    "wdm": "webdriver-manager-replacement",
+    "wdm-update": "webdriver-manager-replacement update --gecko=false"
   },
   "repository": {
     "type": "git",

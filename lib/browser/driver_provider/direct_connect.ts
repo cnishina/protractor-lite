@@ -11,13 +11,14 @@ export class DirectConnect {
   // TODO(cnsihina): What if the out_dir is different?
   static getDriver(browserConfig: BrowserConfig): WebDriver {
     let driver: WebDriver;
+    const outDir = browserConfig.outDir;
     if (browserConfig.capabilities.browserName === 'chrome') {
-      const chromeDriverPath = new wdm.ChromeDriver().getBinaryPath();
+      const chromeDriverPath = new wdm.ChromeDriver({outDir}).getBinaryPath();
       driver = ChromeDriver.createSession(
         new Capabilities(browserConfig.capabilities),
         new ChromeServiceBuilder(chromeDriverPath).build());
     } else if (browserConfig.capabilities.browserName === 'firefox') {
-      const geckoDriverPath = new wdm.GeckoDriver().getBinaryPath();
+      const geckoDriverPath = new wdm.GeckoDriver({outDir}).getBinaryPath();
       driver = FirefoxDriver.createSession(
         new Capabilities(browserConfig.capabilities),
         new FirefoxServiceBuilder(geckoDriverPath).build());

@@ -1,0 +1,43 @@
+import * as net from 'net';
+import {Local} from './local';
+
+describe('local', () => {
+  const origTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+  beforeAll(() => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
+  });
+
+  afterAll(() => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = origTimeout;
+  });
+
+  describe('class Local', () => {
+    describe('findPort', () => {
+      let server4000: net.Server;
+      let server4001: net.Server;
+      let server4002: net.Server;
+
+      beforeAll(() => {
+        server4000 = net.createServer().listen(4000);
+        server4001 = net.createServer().listen(4001);
+        server4002 = net.createServer().listen(4002);
+      });
+
+      afterAll(() => {
+        server4000.close();
+        server4001.close();
+        server4002.close();
+      });
+
+      it('should find a port greater than 4002', async () => {
+        const port = await Local.findPort(4000, 4500);
+        expect(port).toBeGreaterThanOrEqual(4002);
+      });
+
+      it('should not find a port', async () => {
+        const port = await Local.findPort(4000, 4002);
+        expect(port).toBeNull();
+      });
+    });
+  });
+});

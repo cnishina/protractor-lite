@@ -15,7 +15,7 @@ describe('index', () => {
   const capabilities = {
     browserName: 'chrome',
     chromeOptions: {
-      args: ['--headless', '--disable-gpu']
+      args: ['--headless', '--disable-gpu', '--noSandbox']
     },
   };
   let browser: Browser;

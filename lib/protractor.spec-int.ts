@@ -10,7 +10,7 @@ log.setLevel('info');
 const capabilities = {
   browserName: 'chrome',
   chromeOptions: {
-    args: ['--headless']
+    args: ['--headless', '--disable-gpu', '--noSandbox']
   },
 };
 const config = {capabilities, directConnect: true};

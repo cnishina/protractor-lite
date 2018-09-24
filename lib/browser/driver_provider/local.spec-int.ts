@@ -12,6 +12,24 @@ describe('local', () => {
   });
 
   describe('class Local', () => {
+    describe('getDriver', () => {
+      it('should create a selenium server and a driver', async () => {
+        const capabilities = {
+          browserName: 'chrome',
+          chromeOptions: {
+            args: ['--headless', '--disable-gpu', '--noSandbox']
+          },
+        };
+        const browserConfig = {capabilities, portRangeStart: 5000,
+          portRangeEnd: 6000};
+        const local = new Local(browserConfig);
+        const driver = await local.getDriver();
+        expect(driver).not.toBeNull();
+        expect(driver.constructor.name).toBe('mixin');
+        await local.quitDriver();
+      });
+    });
+
     describe('findPort', () => {
       let server4000: net.Server;
       let server4001: net.Server;
@@ -30,12 +48,14 @@ describe('local', () => {
       });
 
       it('should find a port greater than 4002', async () => {
-        const port = await Local.findPort(4000, 4500);
+        const local = new Local({});
+        const port = await local.findPort(4000, 4500);
         expect(port).toBeGreaterThanOrEqual(4002);
       });
 
       it('should not find a port', async () => {
-        const port = await Local.findPort(4000, 4002);
+        const local = new Local({});
+        const port = await local.findPort(4000, 4002);
         expect(port).toBeNull();
       });
     });

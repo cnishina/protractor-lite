@@ -1,11 +1,12 @@
-import {Builder, WebDriver, Session} from 'selenium-webdriver';
+import {Session, WebDriver} from 'selenium-webdriver';
 import {BrowserConfig} from './browser_config';
-import {DirectConnect} from './driver_provider';
+import {DirectConnect, Hosted, Local, Provider} from './driver_provider';
 import {wait} from '../wait';
 
 export class Browser {
   driver: WebDriver;
   session: Session;
+  provider: Provider;
 
   // TODO(cnishina): implement later?
   rootEl: any;
@@ -50,14 +51,13 @@ export class Browser {
    */
   async start(): Promise<void> {
     if (this.browserConfig.directConnect) {
-      this.driver = DirectConnect.getDriver(this.browserConfig);
+      this.provider = new DirectConnect(this.browserConfig);
+    } else if (this.browserConfig.seleniumAddress) {
+      this.provider = new Hosted(this.browserConfig);
     } else {
-      // TODO(cnishina): remove this use something from driver_provider
-      const builder = new Builder()
-        .usingServer(this.browserConfig.seleniumAddress)
-        .withCapabilities(this.browserConfig.capabilities);
-      this.driver = await builder.build();
+      this.provider = new Local(this.browserConfig);
     }
+    this.driver = await this.provider.getDriver();
     this.session = await this.driver.getSession();
   }
 
@@ -66,5 +66,9 @@ export class Browser {
    */
   async quit(): Promise<void> {
     await this.driver.quit();
+  }
+
+  async shutdown(): Promise<void> {
+    this.provider.quitDriver();
   }
 }

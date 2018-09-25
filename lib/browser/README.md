@@ -1,4 +1,6 @@
-# selenium-webdriver@4 notes:
+# browser
+
+## selenium-webdriver@4 notes:
 
 - WebDriver static method `attachToSession` removed
 alternatively, refer to

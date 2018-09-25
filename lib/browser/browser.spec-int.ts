@@ -32,8 +32,7 @@ describe('browser', () => {
     beforeAll(async() => {
       await wdm.start(options);
       seleniumAddress = 'http://127.0.0.1:4444/wd/hub';
-      browser = new Browser({capabilities,
-        seleniumAddress});
+      browser = new Browser({capabilities, seleniumAddress});
       wdSessions = seleniumAddress + '/sessions';
       await new Promise((resolve, _) => {
         log.info('sleeping for 10 seconds');

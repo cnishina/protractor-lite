@@ -39,9 +39,11 @@ describe('hosted', () => {
         };
         const browserConfig = {capabilities,
           seleniumAddress: 'http://127.0.0.1:4444/wd/hub'};
-        const driver = await new Hosted(browserConfig).getDriver();
+        const hosted = new Hosted(browserConfig);
+        const driver = await hosted.getDriver();
         expect(driver).not.toBeNull();
         expect(driver.constructor.name).toBe('mixin');
+        await hosted.quitDriver();
       });
     });
   });

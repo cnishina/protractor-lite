@@ -1,6 +1,7 @@
+import * as util from 'util';
 import {ProtractorLocator} from './locator';
 import {By, WebDriver, WebElement} from 'selenium-webdriver';
-import * as clientSideScripts from '../client_side/finders';
+const clientSideScripts = require('../client_side/finders');
 
 export class ProtractorBy {
   /**

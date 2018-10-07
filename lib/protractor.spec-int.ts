@@ -1,10 +1,11 @@
-import * as log from 'loglevel';
+import * as loglevel from 'loglevel';
 import {ChildProcess} from 'child_process';
 import {By} from 'selenium-webdriver';
 import {build} from './protractor';
 import {spawnProcess} from '../spec/support/test_utils';
 import * as env from '../spec/server/env';
 
+const log = loglevel.getLogger('protractor-test');
 log.setLevel('info');
 
 const capabilities = {

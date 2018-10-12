@@ -7,7 +7,7 @@ import {By} from 'selenium-webdriver';
  * as opposed to inheriting from the webdriver.By class itself, which is
  * actually analogous to ProtractorLocator.
  */
-export class WebdriverBy {
+export class WebDriverBy {
   className: (className: string) => By = By.className;
   css: (css: string) => By = By.css;
   id: (id: string) => By = By.id;

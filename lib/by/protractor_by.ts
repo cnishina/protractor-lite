@@ -1,9 +1,9 @@
-import * as util from 'util';
 import {ProtractorLocator} from './locator';
+import {WebDriverBy} from './webdriver_by';
 import {By, WebDriver, WebElement} from 'selenium-webdriver';
 const clientSideScripts = require('../client_side/finders');
 
-export class ProtractorBy {
+export class ProtractorBy extends WebDriverBy{
   /**
    * Find a button by text.
    * @param {string} searchText
@@ -23,5 +23,4 @@ export class ProtractorBy {
       }
     };
   };
-
 }

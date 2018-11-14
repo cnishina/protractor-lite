@@ -1,0 +1,6 @@
+filegroup(
+    name = "client_side",
+    srcs = glob(
+        include = glob(["*.js"]),
+    )
+)

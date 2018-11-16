@@ -1,0 +1,35 @@
+package(default_visibility=["//visibility:public"])
+load("@build_bazel_rules_typescript//:defs.bzl", "ts_library")
+
+ts_library(
+    name = "locator",
+    srcs = ["locator.ts"],
+    deps = [
+        "@npm//@types/selenium-webdriver",
+        "@npm//selenium-webdriver",
+    ],
+)
+
+ts_library(
+    name = "webdriver_by",
+    srcs = ["webdriver_by.ts"],
+    deps = [
+        "@npm//@types/selenium-webdriver",
+        "@npm//selenium-webdriver",
+    ],
+)
+
+ts_library(
+    name = "protractor_by",
+    srcs = ["protractor_by.ts"],
+    data = [
+        "//lib/client_side:finders",
+    ],
+    deps = [
+        "@npm//@types/selenium-webdriver",
+        "@npm//@types/node",
+        "@npm//selenium-webdriver",
+        ":webdriver_by",
+        ":locator",
+    ],
+)

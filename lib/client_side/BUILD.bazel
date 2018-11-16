@@ -1,6 +1,10 @@
-filegroup(
-    name = "client_side",
-    srcs = glob(
-        include = glob(["*.js"]),
-    )
+package(default_visibility = ["//visibility:public"])
+load("@bazel_javascript//:defs.bzl", "js_library")
+
+
+js_library(
+  name = "finders",
+  srcs = [
+    "finders.js",
+  ],
 )

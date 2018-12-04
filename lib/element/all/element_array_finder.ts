@@ -1,6 +1,6 @@
 import {promise, WebElement} from 'selenium-webdriver';
 import {Browser} from '../../browser';
-import {GetWebElements} from '..';
+import {GetWebElements} from '../get_web_elements';
 import {isProtractorLocator, Locator} from '../../by/locator';
 
 export function elementArrayFinderFactory(

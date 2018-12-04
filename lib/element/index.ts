@@ -1,18 +1,7 @@
-import {promise, WebElement} from 'selenium-webdriver';
 import {Browser} from '../browser';
-import {ElementArrayFinder, elementArrayFinderFactory} from './all/element_array_finder';
+import {ElementArrayFinder, elementArrayFinderFactory} from './all';
 import {ElementFinder, elementFinderFactory} from './element_finder';
 import {Locator} from '../by/locator';
-
-/**
- * The interface for the GetWebElements method.
- */
-export interface GetWebElements extends Function {
-  /**
-   * @returns promise for the web element array.
-   */
-  (): promise.Promise<WebElement[]>;
-}
 
 /**
  * The ElementHelper interface allows to create the factory functions:

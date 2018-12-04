@@ -17,7 +17,7 @@ export class DirectConnect implements Provider {
    */
   async getDriver(): Promise<WebDriver> {
     let driver: WebDriver;
-    const outDir = this.browserConfig.outDir;
+    const outDir = this.browserConfig.outDir || "downloads";
     if (this.browserConfig.capabilities.browserName === 'chrome') {
       const chromeDriverPath = new wdm.ChromeDriver({outDir}).getBinaryPath();
       driver = ChromeDriver.createSession(

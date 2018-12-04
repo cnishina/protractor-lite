@@ -1,6 +1,6 @@
 import {promise, WebElement} from 'selenium-webdriver';
 import {Browser} from '../browser';
-import {GetWebElements} from './index';
+import {GetWebElements} from './get_web_elements';
 import {isProtractorLocator, Locator} from '../by/locator';
 import {wait} from '../wait';
 
@@ -25,24 +25,29 @@ export class ElementFinder {
     public getWebElements: GetWebElements) {
   }
 
+  beforeHook(){}
+  afterHook(){}
+
   /**
    * Clears the text from an input or textarea web element.
    * @param waitStrategy
    */
-  async clear(waitStrategy?: string): Promise<void> {
+  async clear(waitStrategy?: string): Promise<ElementFinder> {
     await wait(this.browser.defaultWaitStrategy, waitStrategy);
     let webElements = await this.getWebElements();
     await webElements[0].clear();
+    return this;
   }
 
   /**
    * Clicks on a web element.
    * @param waitStrategy
    */
-  async click(waitStrategy?: string): Promise<void> {
+  async click(waitStrategy?: string): Promise<ElementFinder> {
     await wait(this.browser.defaultWaitStrategy, waitStrategy);
     let webElements = await this.getWebElements();
     await webElements[0].click();
+    return this;
   }
 
   /**

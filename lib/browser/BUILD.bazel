@@ -1,0 +1,23 @@
+package(default_visibility=["//visibility:public"])
+load("@build_bazel_rules_typescript//:defs.bzl", "ts_library")
+load("@build_bazel_rules_nodejs//:defs.bzl", "jasmine_node_test")
+
+ts_library(
+    name = "browser",
+    srcs = [
+        "browser.ts",
+        "index.ts",
+    ],
+    deps = [
+        "@npm//@types/selenium-webdriver",
+        "@npm//selenium-webdriver",
+        ":browser_config",
+        "//lib/browser/driver_provider",
+        "//lib:wait",
+    ],
+)
+
+ts_library(
+    name = "browser_config",
+    srcs = ["browser_config.ts"],
+)

@@ -1,0 +1,46 @@
+package(default_visibility=["//visibility:public"])
+load("@build_bazel_rules_typescript//:defs.bzl", "ts_library")
+load("@build_bazel_rules_nodejs//:defs.bzl", "jasmine_node_test")
+
+ts_library(
+    name = "element",
+    srcs = [
+        "index.ts",
+    ],
+    deps = [
+        ":element_finder",
+        "//lib/browser",
+        "//lib/by",
+        "//lib/element/all",
+    ]
+)
+
+
+ts_library(
+    name = "element_finder",
+    srcs = [
+        "element_finder.ts",
+    ],
+    data = [
+        "//lib/client_side:finders",
+    ],
+    deps = [
+        "@npm//@types/selenium-webdriver",
+        "@npm//selenium-webdriver",
+        ":get_web_elements",
+        "//lib/browser",
+        "//lib/by",
+        "//lib:wait",
+    ],
+)
+
+ts_library(
+    name = "get_web_elements",
+    srcs = [
+        "get_web_elements.ts",
+    ],
+    deps = [
+        "@npm//@types/selenium-webdriver",
+        "@npm//selenium-webdriver",
+    ],
+)

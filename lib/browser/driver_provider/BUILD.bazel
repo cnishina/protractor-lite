@@ -1,0 +1,54 @@
+package(default_visibility=["//visibility:public"])
+load("@build_bazel_rules_typescript//:defs.bzl", "ts_library")
+load("@build_bazel_rules_nodejs//:defs.bzl", "jasmine_node_test")
+
+ts_library(
+    name = "driver_provider",
+    srcs = [
+        "direct_connect.ts",
+        "hosted.ts",
+        "index.ts",
+        "local.ts",
+        "provider.ts",
+    ],
+    deps = [
+        "@npm//@types/loglevel",
+        "@npm//@types/node",
+        "@npm//@types/selenium-webdriver",
+        "@npm//loglevel",
+        "@npm//selenium-webdriver",
+        "@npm//webdriver-manager-replacement",
+        "//lib/browser:browser_config",
+    ],
+)
+
+ts_library(
+    name = "driver_provider_int_spec",
+    srcs = [
+        "direct_connect.int-spec.ts",
+        # "hosted.int-spec.ts",
+        # "local.int-spec.ts",
+    ],
+    data = [
+        "//:downloads",
+    ],
+    deps = [
+        "@npm//@types/jasmine",
+        "@npm//@types/node",
+        "@npm//jasmine",
+        "@npm//webdriver-manager-replacement",
+        ":driver_provider",
+    ]
+)
+
+jasmine_node_test(
+    name = "driver_provider_int_test",
+    data = [
+        "//:downloads",
+    ],
+    deps = [
+        "@npm//jasmine",
+        ":driver_provider",
+        ":driver_provider_int_spec",
+    ]
+)

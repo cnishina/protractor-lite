@@ -72,6 +72,6 @@ export class Browser {
    * Shuts down the provider.
    */
   async shutdown(): Promise<void> {
-    this.provider.quitDriver();
+    await this.provider.quitDriver();
   }
 }

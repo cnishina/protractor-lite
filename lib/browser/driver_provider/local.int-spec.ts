@@ -25,7 +25,7 @@ describe('local', () => {
         const local = new Local(browserConfig);
         const driver = await local.getDriver();
         expect(driver).not.toBeNull();
-        expect(driver.constructor.name).toBe('mixin');
+        expect(driver.constructor.name).toBe('WebDriver');
         await local.quitDriver();
       });
     });

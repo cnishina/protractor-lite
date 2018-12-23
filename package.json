@@ -15,7 +15,7 @@
     "test-unit": "npm run tsc && jasmine JASMINE_CONFIG_PATH=spec/jasmine-unit.json",
     "tsc": "tsc",
     "wdm": "webdriver-manager-replacement",
-    "wdm-update": "webdriver-manager-replacement update --gecko=false --out_dir=downloads --versions.chrome=2.45"
+    "wdm-update": "webdriver-manager-replacement update --gecko=false --out_dir=downloads"
   },
   "repository": {
     "type": "git",

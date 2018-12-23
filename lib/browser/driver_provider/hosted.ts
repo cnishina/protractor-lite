@@ -1,5 +1,6 @@
 import {BrowserConfig} from '../browser_config';
 import {Builder, WebDriver} from 'selenium-webdriver';
+import * as http from 'selenium-webdriver/http';
 import {Provider} from './provider';
 
 export class Hosted implements Provider {
@@ -10,10 +11,9 @@ export class Hosted implements Provider {
    * @returns A promise for the WebDriver.
    */
   async getDriver(): Promise<WebDriver> {
-    const builder = new Builder()
-      .usingServer(this.browserConfig.seleniumAddress)
-      .withCapabilities(this.browserConfig.capabilities);
-    return builder.build();
+    const httpClient = new http.HttpClient(this.browserConfig.seleniumAddress);
+    const executor = new http.Executor(httpClient);
+    return new WebDriver(null, executor);
   }
 
   /**

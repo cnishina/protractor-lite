@@ -1,7 +1,7 @@
 import {DirectConnect} from './direct_connect';
 
 describe('direct_connect', () => {
-  describe('DirectConnect', () => {
+  describe('class DirectConnect', () => {
     describe('getDriver', () => {
       it('should create a chromedriver', async () => {
         const browserConfig = {

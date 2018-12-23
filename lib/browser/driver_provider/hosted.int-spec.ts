@@ -6,13 +6,16 @@ const options: wdm.Options = {
   server: {
     name: 'selenium',
     runAsDetach: true,
-    runAsNode: true
-  }
+    runAsNode: true,
+    port: 5555
+  },
+  outDir: 'downloads'
 };
 
 describe('hosted', () => {
   const origTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
   beforeAll(() => {
+    wdm.setLogLevel('debug');
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
   });
 
@@ -31,18 +34,19 @@ describe('hosted', () => {
 
     describe('getDriver', () => {
       it('should create a driver using seleniumAddress', async () => {
-        const capabilities = {
-          browserName: 'chrome',
-          chromeOptions: {
-            args: ['--headless', '--disable-gpu', '--noSandbox']
+        const browserConfig = {
+          capabilities: {
+            browserName: 'chrome',
+            chromeOptions: {
+              args: ['--headless', '--disable-gpu', '--noSandbox']
+            },
           },
+          seleniumAddress: 'http://127.0.0.1:5555/wd/hub'
         };
-        const browserConfig = {capabilities,
-          seleniumAddress: 'http://127.0.0.1:4444/wd/hub'};
         const hosted = new Hosted(browserConfig);
         const driver = await hosted.getDriver();
         expect(driver).not.toBeNull();
-        expect(driver.constructor.name).toBe('mixin');
+        expect(driver.constructor.name).toBe('WebDriver');
         await hosted.quitDriver();
       });
     });

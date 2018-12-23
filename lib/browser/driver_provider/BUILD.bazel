@@ -26,8 +26,8 @@ ts_library(
     name = "driver_provider_int_spec",
     srcs = [
         "direct_connect.int-spec.ts",
-        # "hosted.int-spec.ts",
-        # "local.int-spec.ts",
+        "hosted.int-spec.ts",
+        "local.int-spec.ts",
     ],
     data = [
         "//:downloads",

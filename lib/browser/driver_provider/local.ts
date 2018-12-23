@@ -1,6 +1,7 @@
 import * as net from 'net';
 import * as wdm from 'webdriver-manager-replacement';
 import {Builder, WebDriver} from 'selenium-webdriver';
+import * as http from 'selenium-webdriver/http';
 import {BrowserConfig} from '../browser_config';
 import {Provider} from './provider';
 
@@ -8,11 +9,13 @@ export class Local implements Provider {
   options: wdm.Options;
   constructor(public browserConfig: BrowserConfig) {
     // Generate the options for webdriver-manager to start the selenium server.
+    const outDir = this.browserConfig.outDir || "downloads";
     this.options = {
       browserDrivers: [],
+      outDir
     };
 
-    if (new wdm.SeleniumServer().getBinaryPath()) {
+    if (new wdm.SeleniumServer({outDir}).getBinaryPath()) {
       this.options.server = {
         name: 'selenium',
         runAsDetach: true,
@@ -21,13 +24,13 @@ export class Local implements Provider {
     } else {
       throw new Error('No selenium server jar file.');
     }
-    if (new wdm.ChromeDriver().getBinaryPath()) {
+    if (new wdm.ChromeDriver({outDir}).getBinaryPath()) {
       this.options.browserDrivers.push({name: 'chromedriver'});
     }
-    if (new wdm.GeckoDriver().getBinaryPath()) {
+    if (new wdm.GeckoDriver({outDir}).getBinaryPath()) {
       this.options.browserDrivers.push({name: 'geckodriver'});
     }
-    if (new wdm.IEDriver().getBinaryPath()) {
+    if (new wdm.IEDriver({outDir}).getBinaryPath()) {
       this.options.browserDrivers.push({name: 'iedriver'});
     }
     if (this.options.browserDrivers.length === 0) {
@@ -51,11 +54,9 @@ export class Local implements Provider {
     // TODO(cnishina): A event listener on SIGNIT to quit the driver. This will
     // be a good clean up step to not leave any selenium servers running in the
     // background.
-
-    const builder = new Builder()
-      .usingServer(seleniumAddress)
-      .withCapabilities(this.browserConfig.capabilities);
-    return await builder.build();
+    const httpClient = new http.HttpClient(seleniumAddress);
+    const executor = new http.Executor(httpClient);
+    return new WebDriver(null, executor);
   }
 
   /**

@@ -27,26 +27,3 @@ yarn_install(
   package_json = "//:package.json",
   yarn_lock = "//:yarn.lock",
 )
-
-# Setup Go toolchain
-load("@io_bazel_rules_go//go:def.bzl", "go_rules_dependencies", "go_register_toolchains")
-go_rules_dependencies()
-go_register_toolchains()
-
-# Setup web testing, choose browsers we can test on
-load("@io_bazel_rules_webtesting//web:repositories.bzl", "browser_repositories", "web_test_repositories")
-
-web_test_repositories()
-browser_repositories(
-    chromium = True,
-)
-
-# Required for access to js_library, ts_library, js_test, web_bundle, etc.
-load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
-git_repository(
-  name = "bazel_javascript",
-  remote = "https://github.com/zenclabs/bazel-javascript.git",
-  tag = "0.0.25",
-)
-
-

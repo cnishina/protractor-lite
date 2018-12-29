@@ -1,14 +1,14 @@
 import * as log from 'loglevel';
-import {ChildProcess} from 'child_process';
 import {By} from 'selenium-webdriver';
 import {Browser} from '../browser';
 import {buildElementHelper} from './index';
-import {spawnProcess} from '../../spec/support/test_utils';
+import {HttpServer} from '../../spec/server/http_server';
 import * as env from '../../spec/server/env';
 
 log.setLevel('info');
 const page1 = `${env.httpBaseUrl}/spec/website/html/page1.html`;
 const page2 = `${env.httpBaseUrl}/spec/website/html/page2.html`;
+const httpServer = new HttpServer();
 
 describe('index', () => {
   const origTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
@@ -19,18 +19,17 @@ describe('index', () => {
     },
   };
   let browser: Browser;
-  let proc: ChildProcess;
 
   beforeAll(() => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
   });
 
   beforeAll(async () => {
-    proc = spawnProcess('node', ['dist/spec/server/http_server.js']);
+    httpServer.createServer();
   });
 
   afterAll(async () => {
-    process.kill(proc.pid);
+    httpServer.closeServer();
     await new Promise((resolve, _) => {
       setTimeout(resolve, 1000);
     });

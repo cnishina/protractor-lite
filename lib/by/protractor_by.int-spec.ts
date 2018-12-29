@@ -1,15 +1,13 @@
-import {ChildProcess} from 'child_process';
 import * as loglevel from 'loglevel';
 import {ProtractorBy} from './protractor_by';
 import {buildElementHelper} from '../element';
 import {Browser} from '../browser';
-import {spawnProcess} from '../../spec/support/test_utils'
+import {HttpServer} from '../../spec/server/http_server';
 
 const log = loglevel.getLogger('protractor-test');
 
 const origTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
-let proc: ChildProcess;
-let browser: Browser;
+const httpServer = new HttpServer();
 const capabilities = {
   browserName: 'chrome',
   chromeOptions: {
@@ -27,29 +25,34 @@ describe('protractor_by', () => {
 
   describe('byButtonText', () => {
     beforeAll(async () => {
-      proc = spawnProcess('node', ['dist/spec/server/http_server.js']);
-      log.debug('http-server: ' + proc.pid);
-      browser = new Browser({capabilities, directConnect: true});
-      await browser.start();
-      await new Promise((resolve, _) => {
-        setTimeout(resolve, 1000);
-      });
+      httpServer.createServer();
     });
 
     afterAll(async () => {
-      await browser.quit();
-      process.kill(proc.pid);
+      httpServer.closeServer();
+
       await new Promise((resolve, _) => {
         setTimeout(resolve, 5000);
       });
     });
 
     it('should find a button by text', async () => {
+      let browser = new Browser({
+        capabilities,
+        directConnect: true
+        // ,
+        // outDir: 'downloads'
+      });
+      await browser.start();
+      await new Promise((resolve, _) => {
+        setTimeout(resolve, 1000);
+      });
       await browser.get('http://localhost:8812/spec/website/html/page1.html');
       let element = buildElementHelper(browser);
       let by = new ProtractorBy();
       await element(by.buttonText('button enabled')).click();
       expect(await browser.getTitle()).toBe('page 2');
+      await browser.quit();
     });
   });
 });

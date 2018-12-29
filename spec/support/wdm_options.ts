@@ -7,5 +7,6 @@ export const options: wdm.Options = {
     port: 4444,
     runAsDetach: true,
     runAsNode: true
-  }
+  },
+  outDir: 'downloads'
 };

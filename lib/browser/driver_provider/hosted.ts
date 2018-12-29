@@ -13,7 +13,7 @@ export class Hosted implements Provider {
   async getDriver(): Promise<WebDriver> {
     const httpClient = new http.HttpClient(this.browserConfig.seleniumAddress);
     const executor = new http.Executor(httpClient);
-    return new WebDriver(null, executor);
+    return WebDriver.createSession(executor, this.browserConfig.capabilities);
   }
 
   /**

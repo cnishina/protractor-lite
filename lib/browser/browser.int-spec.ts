@@ -50,7 +50,6 @@ describe('browser', () => {
     it('should start a browser session', async() => {
       let body = await requestBody(wdSessions, {});
       expect(JSON.parse(body)['value'].length).toBe(0);
-
       await browser.start();
 
       body = await requestBody(wdSessions, {});
@@ -60,7 +59,6 @@ describe('browser', () => {
     it('should stop a browser', async() => {
       let body = await requestBody(wdSessions, {});
       expect(JSON.parse(body)['value'].length).toBe(1);
-
       await browser.quit();
 
       body = await requestBody(wdSessions, {});

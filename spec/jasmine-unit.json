@@ -3,6 +3,6 @@
   "spec_files": [
     "**/*.unit-spec.js"
   ],
-  "stopSpecOnExpectationFailure": false,
-  "random": true
+  "oneFailurePerSpec": true,
+  "randomizeTests": false
 }

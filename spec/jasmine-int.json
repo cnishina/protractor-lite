@@ -3,7 +3,6 @@
   "spec_files": [
     "**/*.int-spec.js"
   ],
-  "helpers": [],
-  "stopSpecOnExpectationFailure": false,
-  "random": false
+  "oneFailurePerSpec": true,
+  "randomizeTests": false
 }

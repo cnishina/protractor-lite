@@ -14,6 +14,9 @@ load("@build_bazel_rules_typescript//:defs.bzl", "ts_setup_workspace")
 ts_setup_workspace()
 
 # Setup the NodeJS toolchain
+load("@build_bazel_rules_nodejs//:package.bzl", "rules_nodejs_dependencies")
+rules_nodejs_dependencies()
+
 load("@build_bazel_rules_nodejs//:defs.bzl", "node_repositories", "yarn_install")
 node_repositories(package_json = ["//:package.json"])
 

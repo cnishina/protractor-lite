@@ -12,9 +12,8 @@ ts_library(
         "//lib/browser",
         "//lib/by",
         "//lib/element/all",
-    ]
+    ],
 )
-
 
 ts_library(
     name = "element_finder",
@@ -43,4 +42,34 @@ ts_library(
         "@npm//@types/selenium-webdriver",
         "@npm//selenium-webdriver",
     ],
+)
+
+# Unit tests
+
+ts_library(
+    name = "element_finder_unit_spec",
+    srcs = [
+        "element_finder.unit-spec.ts",
+        "index.unit-spec.ts",
+    ],
+    deps = [
+        "@npm//@types/jasmine",
+        "@npm//@types/loglevel",
+        "@npm//@types/node",
+        "@npm//@types/selenium-webdriver",
+        "@npm//jasmine",
+        "@npm//loglevel",
+        "@npm//selenium-webdriver",
+        "//lib/browser",
+        ":element",
+        ":element_finder",
+    ],
+)
+
+jasmine_node_test(
+    name = "element_finder_unit_test",
+    deps = [
+        "@npm//jasmine",
+        ":element_finder_unit_spec",
+    ]
 )

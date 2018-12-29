@@ -19,6 +19,8 @@ ts_library(
     ],
 )
 
+# Unit tests
+
 ts_library(
     name = "by_unit_spec",
     srcs = [
@@ -32,30 +34,22 @@ ts_library(
         "@npm//@types/jasmine",
         "@npm//@types/node",
         "@npm//jasmine",
-    ]
+    ],
 )
 
-ts_library(
-    name = "by_int_spec",
-    srcs = [
-        "protractor_by.int-spec.ts"
-    ],
+jasmine_node_test(
+    name = "by_unit_test",
     data = [
         "//lib/client_side:finders",
     ],
     deps = [
-        # missing browser, element, test_utils
-        "@npm//@types/jasmine",
-        "@npm//@types/loglevel",
-        "@npm//@types/node",
-        "@npm//jasmine",
-        "@npm//loglevel",
-        "@npm//webdriver-manager-replacement",
         ":by",
-        "//lib/browser",
-        "//lib/element",
+        ":by_unit_spec",
+        "@npm//jasmine",
     ],
 )
+
+# Type definition tests
 
 ts_library(
     name = "by_types_spec",
@@ -71,16 +65,17 @@ ts_library(
         "@npm//jasmine",
         "@npm//loglevel",
         "@npm//selenium-webdriver",
-        "@npm//webdriver-manager-replacement",
     ],
 )
 
 jasmine_node_test(
-    name = "by_unit_test",
-    data = ["//lib/client_side:finders"],
+    name = "by_types_test",
+    data = [
+        "//lib/client_side:finders",
+    ],
     deps = [
         ":by",
-        ":by_unit_spec",
+        ":by_types_spec",
         "@npm//jasmine",
     ]
 )

@@ -1,8 +1,8 @@
 import * as loglevel from 'loglevel';
 import * as wdm from 'webdriver-manager-replacement';
 import {Browser} from './browser';
-import {requestBody} from '../../spec/support/http_utils';
-import {options} from '../../spec/support/wdm_options';
+import {requestBody} from '../../../spec/support/http_utils';
+import {options} from '../../../spec/support/wdm_options';
 
 const log = loglevel.getLogger('protractor-test');
 log.setLevel('info');

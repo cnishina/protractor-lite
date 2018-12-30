@@ -9,13 +9,13 @@ ts_library(
         "index.ts",
     ],
     data = [
-        "//lib/client_side:finders",
+        "//lib/core/client_side:finders",
     ],
     deps = [
         "@npm//@types/selenium-webdriver",
         "@npm//selenium-webdriver",
-        "//lib/element:get_web_elements",
-        "//lib/browser",
-        "//lib/by",
+        "//lib/core/element:get_web_elements",
+        "//lib/core/browser",
+        "//lib/core/by",
     ],
 )

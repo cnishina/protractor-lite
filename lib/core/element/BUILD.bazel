@@ -9,9 +9,9 @@ ts_library(
     ],
     deps = [
         ":element_finder",
-        "//lib/browser",
-        "//lib/by",
-        "//lib/element/all",
+        "//lib/core/browser",
+        "//lib/core/by",
+        "//lib/core/element/all",
     ],
 )
 
@@ -21,15 +21,15 @@ ts_library(
         "element_finder.ts",
     ],
     data = [
-        "//lib/client_side:finders",
+        "//lib/core/client_side:finders",
     ],
     deps = [
         "@npm//@types/selenium-webdriver",
         "@npm//selenium-webdriver",
         ":get_web_elements",
-        "//lib/browser",
-        "//lib/by",
-        "//lib:wait",
+        "//lib/core/browser",
+        "//lib/core/by",
+        "//lib/core:wait",
     ],
 )
 
@@ -60,7 +60,7 @@ ts_library(
         "@npm//jasmine",
         "@npm//loglevel",
         "@npm//selenium-webdriver",
-        "//lib/browser",
+        "//lib/core/browser",
         ":element",
         ":element_finder",
     ],

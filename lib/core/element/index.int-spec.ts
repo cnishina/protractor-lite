@@ -2,8 +2,8 @@ import * as log from 'loglevel';
 import {By} from 'selenium-webdriver';
 import {Browser} from '../browser';
 import {buildElementHelper} from './index';
-import {HttpServer} from '../../spec/server/http_server';
-import * as env from '../../spec/server/env';
+import {HttpServer} from '../../../spec/server/http_server';
+import * as env from '../../../spec/server/env';
 
 log.setLevel('info');
 const page1 = `${env.httpBaseUrl}/spec/website/html/page1.html`;

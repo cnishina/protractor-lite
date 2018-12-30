@@ -2,7 +2,7 @@ import * as loglevel from 'loglevel';
 import {ProtractorBy} from './protractor_by';
 import {buildElementHelper} from '../element';
 import {Browser} from '../browser';
-import {HttpServer} from '../../spec/server/http_server';
+import {HttpServer} from '../../../spec/server/http_server';
 
 const log = loglevel.getLogger('protractor-test');
 

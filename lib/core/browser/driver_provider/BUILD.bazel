@@ -18,7 +18,7 @@ ts_library(
         "@npm//loglevel",
         "@npm//selenium-webdriver",
         "@npm//webdriver-manager-replacement",
-        "//lib/browser:browser_config",
+        "//lib/core/browser:browser_config",
     ],
 )
 

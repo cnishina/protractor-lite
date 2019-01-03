@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "http-server": "npm run tsc && node dist/spec/server/http_server.js",
-    "posttsc": "cp -r lib/client_side/ dist/lib/client_side/",
+    "posttsc": "cp -r lib/core/client_side/ dist/lib/core/client_side/",
     "pretest-int": "npm run wdm-update",
     "pretsc": "rm -rf dist/",
     "prewdm-update": "webdriver-manager-replacement clean",

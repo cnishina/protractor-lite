@@ -1,7 +1,7 @@
 import * as loglevel from 'loglevel';
 import * as wdm from 'webdriver-manager-replacement';
 import {Browser} from './browser';
-import {requestBody} from '../../../spec/support/http_utils';
+import {startSession} from '../../../spec/support/test_utils';
 import {options} from '../../../spec/support/wdm_options';
 
 const log = loglevel.getLogger('protractor-test');
@@ -24,45 +24,30 @@ describe('browser', () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = origTimeout;
   });
 
-  describe('start and stop', () => {
-    let seleniumAddress: string;
+  describe('get and getCurrentUrl', () => {
+    const seleniumAddress = 'http://127.0.0.1:4444/wd/hub';
     let browser: Browser;
-    let wdSessions: string;
 
-    beforeAll(async() => {
+    beforeAll(async () => {
       await wdm.start(options);
-      seleniumAddress = 'http://127.0.0.1:4444/wd/hub';
-      browser = new Browser({capabilities, seleniumAddress});
-      wdSessions = seleniumAddress + '/sessions';
+      const seleniumSessionId = await startSession(
+        seleniumAddress, capabilities);
+      browser = new Browser({seleniumAddress, seleniumSessionId});
       await new Promise((resolve, _) => {
-        log.info('sleeping for 10 seconds');
-        setTimeout(resolve, 10000);
+        setTimeout(resolve, 3000);
       });
     });
 
-    afterAll(async() => {
+    afterAll(async () => {
       await wdm.shutdown(options);
       await new Promise((resolve, _) => {
         setTimeout(resolve, 3000);
       });
     });
 
-    it('should start a browser session', async() => {
-      let body = await requestBody(wdSessions, {});
-      expect(JSON.parse(body)['value'].length).toBe(0);
-      await browser.start();
-
-      body = await requestBody(wdSessions, {});
-      expect(JSON.parse(body)['value'].length).toBe(1);
-    });
-
-    it('should stop a browser', async() => {
-      let body = await requestBody(wdSessions, {});
-      expect(JSON.parse(body)['value'].length).toBe(1);
-      await browser.quit();
-
-      body = await requestBody(wdSessions, {});
-      expect(JSON.parse(body)['value'].length).toBe(0);
+    it('should navigate to a url', async () => {
+      await browser.get('https://wwww.google.com/');
+      expect(await browser.getCurrentUrl()).toBe('https://wwww.google.com/');
     });
   });
 });

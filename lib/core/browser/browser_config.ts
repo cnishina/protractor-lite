@@ -1,25 +1,15 @@
 export interface BrowserConfig {
-  capabilities?: Capabilities;
-
-  /* The output directory where webdriver-manager saves the binaries. */
-  outDir?: string;
-
-  /* direct connect: connect directly to a browser driver. */
-  directConnect?: boolean;
-
-  /* hosted: Selenium address example: http://127.0.0.1:4444/wd/hub */
+  /**
+   * The selenium address.
+   * For a selenium standalone server, the default is:
+   * http://127.0.0.1:4444/wd/hub. For a chromedriver instance, this
+   * might be: http://127.0.0.1:9515.
+   */
   seleniumAddress?: string;
 
-  /* local: The starting port range. */
-  portRangeStart?: number;
-
-  /* local: The end port range. */
-  portRangeEnd?: number;
+  /**
+   * The selenium session id.
+   */
+  seleniumSessionId?: string;
 }
 
-export interface Capabilities {
-  [key: string]: any;
-
-  /* The browser name. */
-  browserName?: string;
-}

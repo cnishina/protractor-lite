@@ -1,17 +1,19 @@
 import {Session, WebDriver} from 'selenium-webdriver';
-const Executor = require('selenium-webdriver/lib/command').Executor;
+import {Executor, HttpClient} from 'selenium-webdriver/http';
 import * as log from 'loglevel';
 
 log.setLevel('debug');
 
 function getWebDriver() {
-  const session = '1234';
+  const sessionId = '1234';
   const capabilities = {
     browserName: 'chrome'
   };
-  return new WebDriver(
-    new Session(session, capabilities),
-    new Executor());
+  const httpClient = new HttpClient('http://127.0.0.1:4444/wd/hub');
+  const executor = new Executor(httpClient);
+  const session = new Session(sessionId, capabilities);
+    
+  return new WebDriver(session, executor);
 };
 
 const WEBDRIVER = {

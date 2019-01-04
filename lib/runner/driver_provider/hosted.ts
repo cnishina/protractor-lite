@@ -1,19 +1,19 @@
-import {BrowserConfig} from '../browser_config';
-import {Builder, WebDriver} from 'selenium-webdriver';
-import * as http from 'selenium-webdriver/http';
+import {WebDriver} from 'selenium-webdriver';
+import {Executor, HttpClient} from 'selenium-webdriver/http';
 import {Provider} from './provider';
+import {RunnerConfig} from '../runner_config';
 
 export class Hosted implements Provider {
-  constructor(public browserConfig: BrowserConfig) {}
+  constructor(public runnerConfig: RunnerConfig) {}
 
   /**
    * Gets the driver generated when the selenium address is available.
    * @returns A promise for the WebDriver.
    */
   async getDriver(): Promise<WebDriver> {
-    const httpClient = new http.HttpClient(this.browserConfig.seleniumAddress);
-    const executor = new http.Executor(httpClient);
-    return WebDriver.createSession(executor, this.browserConfig.capabilities);
+    const httpClient = new HttpClient(this.runnerConfig.seleniumAddress);
+    const executor = new Executor(httpClient);
+    return WebDriver.createSession(executor, this.runnerConfig.capabilities);
   }
 
   /**

@@ -1,7 +1,7 @@
 {
   "spec_dir": "dist",
   "spec_files": [
-    "**/*.types-spec.js"
+    "**/browser.types-spec.js"
   ],
   "oneFailurePerSpec": true,
   "randomizeTests": false

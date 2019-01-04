@@ -3,15 +3,8 @@ load("@build_bazel_rules_typescript//:defs.bzl", "ts_library")
 load("@build_bazel_rules_nodejs//:defs.bzl", "jasmine_node_test")
 
 ts_library(
-    name = "http_server",
+    name = "runner_config",
     srcs = [
-      "env.ts",
-      "http_server.ts",
-    ],
-    data = [
-        "//spec/website/html",
-    ]
-    deps = [
-        "@npm//@types/node",
+        "runner_config.ts",
     ],
 )

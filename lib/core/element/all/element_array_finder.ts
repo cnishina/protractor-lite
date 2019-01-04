@@ -8,7 +8,7 @@ export function elementArrayFinderFactory(
     locator: Locator): ElementArrayFinder {
   let getWebElements: GetWebElements = (): promise.Promise<WebElement[]> => {
     if (isProtractorLocator(locator)) {
-      return locator.findElementsOverride(browser.driver, null, browser.rootEl);
+      return locator.findElementsOverride(browser.driver, null);
     } else {
       return browser.driver.findElements(locator);
     }

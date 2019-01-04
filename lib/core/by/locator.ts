@@ -10,8 +10,7 @@ export type WebDriverLocator = wdBy | ByHash | Function;
  */
 export interface ProtractorLocator {
   findElementsOverride:
-      (driver: WebDriver, using: WebElement,
-       rootSelector: string) => Promise<WebElement[]>;
+      (driver: WebDriver, using: WebElement) => Promise<WebElement[]>;
   row?: (index: number) => Locator;
   column?: (index: string) => Locator;
   toString?: () => string;

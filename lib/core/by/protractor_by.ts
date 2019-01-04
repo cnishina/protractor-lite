@@ -11,11 +11,11 @@ export class ProtractorBy extends WebDriverBy {
    */
   buttonText(searchText: string): ProtractorLocator {
     return {
-      findElementsOverride: async (driver: WebDriver, using: WebElement,
-          rootSelector: string): Promise<WebElement[]> => {
+      findElementsOverride: async (driver: WebDriver,
+          using: WebElement): Promise<WebElement[]> => {
         let webElements = await driver.findElements(
           By.js(clientSideScripts.findByButtonText, searchText,
-            using, rootSelector));
+            using));
         return webElements;
       },
       toString: (): string => {

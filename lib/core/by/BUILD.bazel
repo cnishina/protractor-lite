@@ -10,7 +10,7 @@ ts_library(
         "webdriver_by.ts",
     ],
     data = [
-        "//lib/client_side:finders",
+        "//lib/core/client_side:finders",
     ],
     deps = [
         "@npm//@types/node",
@@ -26,9 +26,6 @@ ts_library(
     srcs = [
         "protractor_by.unit-spec.ts"
     ],
-    data = [
-        "//lib/core/client_side:finders",
-    ],
     deps = [
         ":by",
         "@npm//@types/jasmine",
@@ -39,11 +36,7 @@ ts_library(
 
 jasmine_node_test(
     name = "by_unit_test",
-    data = [
-        "//lib/core/client_side:finders",
-    ],
     deps = [
-        ":by",
         ":by_unit_spec",
         "@npm//jasmine",
     ],
@@ -70,11 +63,7 @@ ts_library(
 
 jasmine_node_test(
     name = "by_types_test",
-    data = [
-        "//lib/core/client_side:finders",
-    ],
     deps = [
-        ":by",
         ":by_types_spec",
         "@npm//jasmine",
     ]
@@ -86,7 +75,6 @@ ts_library(
         "protractor_by.int-spec.ts"
     ],
     data = [
-        "//lib/core/client_side:finders",
         "//:downloads",
     ],
     deps = [
@@ -106,10 +94,6 @@ ts_library(
 
 jasmine_node_test(
     name = "by_int_test",
-    data = [
-        "//lib/core/client_side:finders",
-        "//:downloads",
-    ],
     deps = [
         ":by_int_spec",
         "@npm//jasmine",

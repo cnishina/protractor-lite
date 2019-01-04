@@ -6,6 +6,7 @@ describe('protractor_by', () => {
   beforeAll(() => {
     protractorBy = new ProtractorBy();
   });
+
   describe('by button text', () => {
     it('should create a protractor locator', () => {
       let locator = protractorBy.buttonText('foobar');

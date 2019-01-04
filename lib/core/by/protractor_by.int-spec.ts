@@ -39,9 +39,8 @@ describe('protractor_by', () => {
     it('should find a button by text', async () => {
       let browser = new Browser({
         capabilities,
-        directConnect: true
-        // ,
-        // outDir: 'downloads'
+        directConnect: true,
+        outDir: 'downloads'
       });
       await browser.start();
       await new Promise((resolve, _) => {

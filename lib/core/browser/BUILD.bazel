@@ -20,3 +20,31 @@ ts_library(
     name = "browser_config",
     srcs = ["browser_config.ts"],
 )
+
+ts_library(
+    name = "browser_int_spec",
+    srcs = [
+        "browser.int-spec.ts",
+    ],
+    data = [
+        "//:downloads",
+    ],
+    deps = [
+        "@npm//@types/jasmine",
+        "@npm//@types/node",
+        "@npm//jasmine",
+        "@npm//webdriver-manager-replacement",
+        ":browser",
+        "//spec/server:http_server",
+        "//spec/support:test_utils",
+        "//spec/support:wdm_options",
+    ],
+)
+
+jasmine_node_test(
+    name = "browser_int_test",
+    deps = [
+        ":browser_int_spec",
+        "@npm//jasmine",
+    ]
+)

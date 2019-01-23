@@ -12,7 +12,13 @@ jobs:
 
       - run: npm install
       - run: npm run tsc
-      - run: npm run wdm-update
+      - run:
+          name: webdriver-manager
+          background: true
+          command: |
+            npm run wdm-update
+            npm run wdm-start
+      - run: google-chrome -version
       - run: npm run test-types
       - run: npm run test-unit
-        #- run: npm run test-int
+      - run: npm run test-int

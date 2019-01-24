@@ -11,6 +11,9 @@ ts_library(
         "local.ts",
         "provider.ts",
     ],
+    data = [
+        "//:downloads",
+    ],
     deps = [
         "@npm//@types/loglevel",
         "@npm//@types/node",
@@ -18,7 +21,7 @@ ts_library(
         "@npm//loglevel",
         "@npm//selenium-webdriver",
         "@npm//webdriver-manager-replacement",
-        "//lib/core/browser:browser_config",
+        "//lib/runner:runner_config",
     ],
 )
 
@@ -28,9 +31,6 @@ ts_library(
         "direct_connect.int-spec.ts",
         "hosted.int-spec.ts",
         "local.int-spec.ts",
-    ],
-    data = [
-        "//:downloads",
     ],
     deps = [
         "@npm//@types/jasmine",
@@ -43,12 +43,8 @@ ts_library(
 
 jasmine_node_test(
     name = "driver_provider_int_test",
-    data = [
-        "//:downloads",
-    ],
     deps = [
         "@npm//jasmine",
-        ":driver_provider",
         ":driver_provider_int_spec",
     ]
 )

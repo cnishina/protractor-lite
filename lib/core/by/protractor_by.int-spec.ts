@@ -36,22 +36,22 @@ describe('protractor_by', () => {
       });
     });
 
-    it('should find a button by text', async () => {
-      let browser = new Browser({
-        capabilities,
-        directConnect: true,
-        outDir: 'downloads'
-      });
-      await browser.start();
-      await new Promise((resolve, _) => {
-        setTimeout(resolve, 1000);
-      });
-      await browser.get('http://localhost:8812/spec/website/html/page1.html');
-      let element = buildElementHelper(browser);
-      let by = new ProtractorBy();
-      await element(by.buttonText('button enabled')).click();
-      expect(await browser.getTitle()).toBe('page 2');
-      await browser.quit();
-    });
+    // it('should find a button by text', async () => {
+    //   let browser = new Browser({
+    //     capabilities,
+    //     directConnect: true,
+    //     outDir: 'downloads'
+    //   });
+    //   await browser.start();
+    //   await new Promise((resolve, _) => {
+    //     setTimeout(resolve, 1000);
+    //   });
+    //   await browser.get('http://localhost:8812/spec/website/html/page1.html');
+    //   let element = buildElementHelper(browser);
+    //   let by = new ProtractorBy();
+    //   await element(by.buttonText('button enabled')).click();
+    //   expect(await browser.getTitle()).toBe('page 2');
+    //   await browser.quit();
+    // });
   });
 });

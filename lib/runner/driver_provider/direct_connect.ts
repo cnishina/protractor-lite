@@ -3,13 +3,13 @@ import * as loglevel from 'loglevel';
 import {Capabilities, WebDriver} from 'selenium-webdriver';
 import {Driver as ChromeDriver, ServiceBuilder as ChromeServiceBuilder} from 'selenium-webdriver/chrome';
 import {Driver as FirefoxDriver, ServiceBuilder as FirefoxServiceBuilder} from 'selenium-webdriver/firefox';
-import {BrowserConfig} from '../browser_config';
 import {Provider} from './provider';
+import {RunnerConfig} from '../runner_config';
 
 const log = loglevel.getLogger('protractor');
 
 export class DirectConnect implements Provider {
-  constructor(public browserConfig: BrowserConfig) {}
+  constructor(public runnerConfig: RunnerConfig) {}
 
   /**
    * Gets the driver generated from directly connecting to the browser driver.
@@ -17,16 +17,16 @@ export class DirectConnect implements Provider {
    */
   async getDriver(): Promise<WebDriver> {
     let driver: WebDriver;
-    const outDir = this.browserConfig.outDir || "downloads";
-    if (this.browserConfig.capabilities.browserName === 'chrome') {
+    const outDir = this.runnerConfig.outDir || "downloads";
+    if (this.runnerConfig.capabilities.browserName === 'chrome') {
       const chromeDriverPath = new wdm.ChromeDriver({outDir}).getBinaryPath();
       driver = ChromeDriver.createSession(
-        new Capabilities(this.browserConfig.capabilities),
+        new Capabilities(this.runnerConfig.capabilities),
         new ChromeServiceBuilder(chromeDriverPath).build());
-    } else if (this.browserConfig.capabilities.browserName === 'firefox') {
+    } else if (this.runnerConfig.capabilities.browserName === 'firefox') {
       const geckoDriverPath = new wdm.GeckoDriver({outDir}).getBinaryPath();
       driver = FirefoxDriver.createSession(
-        new Capabilities(this.browserConfig.capabilities),
+        new Capabilities(this.runnerConfig.capabilities),
         new FirefoxServiceBuilder(geckoDriverPath).build());
     } else {
       log.warn('Browser provided is not supported.')

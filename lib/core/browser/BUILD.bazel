@@ -12,7 +12,6 @@ ts_library(
         "@npm//@types/selenium-webdriver",
         "@npm//selenium-webdriver",
         ":browser_config",
-        "//lib/core/browser/driver_provider",
         "//lib/core:wait",
     ],
 )

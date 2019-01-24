@@ -1,5 +1,7 @@
 import * as childProcess from 'child_process';
 import * as log from 'loglevel';
+import {WebDriver} from 'selenium-webdriver';
+import {Executor, HttpClient} from 'selenium-webdriver/http';
 import {requestBody} from './http_utils';
 
 /**
@@ -32,4 +34,13 @@ export function checkConnectivity(testName: string): Promise<boolean> {
         log.warn('[WARN] no connectivity. skipping test ' + testName);
         return false;
       });
+}
+
+export async function startSession(
+    seleniumAddress: string, capabilities: any): Promise<string> {
+  const httpClient = new HttpClient(seleniumAddress);
+  const executor = new Executor(httpClient);
+  const driver = WebDriver.createSession(executor, capabilities);
+  const session = await driver.getSession();
+  return session.getId()
 }

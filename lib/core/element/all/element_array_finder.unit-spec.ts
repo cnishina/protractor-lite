@@ -8,7 +8,10 @@ log.setLevel('info');
 describe('element_array_finder', () => {
   describe('elementArrayFinderFactory', () => {
     it('should create a an elementArrayFinder object', () => {
-      const browser = new Browser(); 
+      const browser = new Browser({
+        seleniumAddress: 'http://127.0.0.1:4444/wd/hub',
+        seleniumSessionId: '12345'
+      }); 
       const elementArrayFinder = elementArrayFinderFactory(
         browser, By.css('.foo'));
       expect(elementArrayFinder).not.toBeNull();

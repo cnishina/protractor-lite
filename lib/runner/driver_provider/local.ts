@@ -1,15 +1,15 @@
 import * as net from 'net';
 import * as wdm from 'webdriver-manager-replacement';
-import {Builder, WebDriver} from 'selenium-webdriver';
-import * as http from 'selenium-webdriver/http';
-import {BrowserConfig} from '../browser_config';
+import {WebDriver} from 'selenium-webdriver';
+import {Executor, HttpClient} from 'selenium-webdriver/http';
 import {Provider} from './provider';
+import {RunnerConfig} from '../runner_config';
 
 export class Local implements Provider {
   options: wdm.Options;
-  constructor(public browserConfig: BrowserConfig) {
+  constructor(public runnerConfig: RunnerConfig) {
     // Generate the options for webdriver-manager to start the selenium server.
-    const outDir = this.browserConfig.outDir || "downloads";
+    const outDir = this.runnerConfig.outDir || "downloads";
     this.options = {
       browserDrivers: [],
       outDir
@@ -45,7 +45,7 @@ export class Local implements Provider {
    */
   async getDriver(): Promise<WebDriver> {
     const port = await this.findPort(
-      this.browserConfig.portRangeStart, this.browserConfig.portRangeEnd);
+      this.runnerConfig.portRangeStart, this.runnerConfig.portRangeEnd);
     const seleniumAddress = `http://127.0.0.1:${port}/wd/hub`;
     this.options.server.port = port;
 
@@ -54,8 +54,8 @@ export class Local implements Provider {
     // TODO(cnishina): A event listener on SIGNIT to quit the driver. This will
     // be a good clean up step to not leave any selenium servers running in the
     // background.
-    const httpClient = new http.HttpClient(seleniumAddress);
-    const executor = new http.Executor(httpClient);
+    const httpClient = new HttpClient(seleniumAddress);
+    const executor = new Executor(httpClient);
     return new WebDriver(null, executor);
   }
 

@@ -1,8 +1,24 @@
 # browser
 
-## selenium-webdriver@4 notes:
+The browser API exposes the WebDriver instance via the `browser.driver`.
+To start a browser instance, the `browserConfig` and `defaultWaitStrategy` is passed to the constructor.
 
-- WebDriver static method `attachToSession` removed
-alternatively, refer to
-angular/protractor#4557 and SeleniumHQ/selenium@e943779#commitcomment-28181671
-- WebDriver instance methods `call` and `touchActions` removed.
+The `browserConfig` has the information to start the WebDriver instance
+with the session ID string. The `defaultWaitStrategy` sets the default
+waiting script that will be passed to every request via the browser
+instance to synchronize the browser session and the browser API.
+
+```
+  --------------------------------------
+  |                                     |
+  |  Browser                            |
+  |                                     |
+  |    ---------------------------      |
+  |    |                          |     |
+  |    |  WebDriver               |     |
+  |    |  started via session id. |     |
+  |    |                          |     |
+  |    ---------------------------      |
+  |                                     |
+  --------------------------------------
+```

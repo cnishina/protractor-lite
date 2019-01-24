@@ -4,7 +4,10 @@ import {buildElementHelper} from './index';
 describe('buildElementHelper', () => {
   let browser: Browser;
   beforeAll(() => {
-    browser = new Browser({});
+    browser = new Browser({
+      seleniumAddress: 'http://127.0.0.1:4444/wd/hub',
+      seleniumSessionId: '12345'
+    });
   });
 
   it('should build element function', () => {

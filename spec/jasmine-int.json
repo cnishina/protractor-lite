@@ -1,7 +1,7 @@
 {
   "spec_dir": "dist/",
   "spec_files": [
-    "**/*.int-spec.js"
+    "**/browser.int-spec.js"
   ],
   "oneFailurePerSpec": true,
   "randomizeTests": false

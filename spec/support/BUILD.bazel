@@ -20,7 +20,9 @@ ts_library(
     deps = [
         "@npm//@types/loglevel",
         "@npm//@types/node",
+        "@npm//@types/selenium-webdriver",
         "@npm//loglevel",
+        "@npm//selenium-webdriver",
         ":http_utils",
     ],
 )

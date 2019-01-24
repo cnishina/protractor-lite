@@ -1,7 +1,6 @@
 import * as childProcess from 'child_process';
 import * as log from 'loglevel';
-import {WebDriver} from 'selenium-webdriver';
-import {Executor, HttpClient} from 'selenium-webdriver/http';
+import {Builder} from 'selenium-webdriver';
 import {requestBody} from './http_utils';
 
 /**
@@ -38,9 +37,10 @@ export function checkConnectivity(testName: string): Promise<boolean> {
 
 export async function startSession(
     seleniumAddress: string, capabilities: any): Promise<string> {
-  const httpClient = new HttpClient(seleniumAddress);
-  const executor = new Executor(httpClient);
-  const driver = WebDriver.createSession(executor, capabilities);
+  const builder = new Builder()
+      .usingServer(seleniumAddress)
+      .withCapabilities(capabilities);
+  const driver = await builder.build();
   const session = await driver.getSession();
-  return session.getId()
+  return session.getId();
 }

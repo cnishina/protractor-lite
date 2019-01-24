@@ -10,7 +10,7 @@ ts_library(
     ],
     data = [
         "//spec/website/html",
-    ]
+    ],
     deps = [
         "@npm//@types/node",
     ],

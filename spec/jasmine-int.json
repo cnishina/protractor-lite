@@ -1,7 +1,7 @@
 {
   "spec_dir": "dist/",
   "spec_files": [
-    "lib/core/**/*.int-spec.js"
+    "lib/**/*.int-spec.js"
   ],
   "oneFailurePerSpec": true,
   "randomizeTests": false

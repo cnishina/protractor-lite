@@ -1,4 +1,4 @@
-import {WebDriver} from 'selenium-webdriver';
+import { WebDriver } from 'selenium-webdriver';
 
 /**
  * Generic interface for driver providers.

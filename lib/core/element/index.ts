@@ -1,7 +1,7 @@
-import {Browser} from '../browser';
-import {ElementArrayFinder, elementArrayFinderFactory} from './all';
-import {ElementFinder, elementFinderFactory} from './element_finder';
-import {Locator} from '../by/locator';
+import { Browser } from '../browser';
+import { ElementArrayFinder, elementArrayFinderFactory } from './all';
+import { ElementFinder, elementFinderFactory } from './element_finder';
+import { Locator } from '../by/locator';
 
 /**
  * The ElementHelper interface allows to create the factory functions:

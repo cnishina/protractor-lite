@@ -1,9 +1,9 @@
-import {By} from 'selenium-webdriver';
-import {build} from './protractor';
+import { By } from 'selenium-webdriver';
+import { build } from './protractor';
 
 import * as env from '../../spec/server/env';
-import {HttpServer} from '../../spec/server/http_server';
-import {startSession} from '../../spec/support/test_utils';
+import { HttpServer } from '../../spec/server/http_server';
+import { startSession } from '../../spec/support/test_utils';
 import { Browser } from './browser';
 import { ElementHelper } from './element';
 

@@ -1,7 +1,7 @@
 import * as log from 'loglevel';
-import {By} from 'selenium-webdriver';
-import {Browser} from '../../browser';
-import {elementArrayFinderFactory} from './element_array_finder';
+import { By } from 'selenium-webdriver';
+import { Browser } from '../../browser';
+import { elementArrayFinderFactory } from './element_array_finder';
 
 log.setLevel('info');
 

@@ -1,6 +1,5 @@
-import {Browser} from './browser';
-
-import {startSession} from '../../../spec/support/test_utils';
+import { Browser } from './browser';
+import { startSession } from '../../../spec/support/test_utils';
 
 describe('browser', () => {
   const origTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;

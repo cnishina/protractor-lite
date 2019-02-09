@@ -1,5 +1,5 @@
-import {Browser} from '../browser';
-import {buildElementHelper} from './index';
+import { Browser } from '../browser';
+import { buildElementHelper } from './index';
 
 describe('buildElementHelper', () => {
   let browser: Browser;

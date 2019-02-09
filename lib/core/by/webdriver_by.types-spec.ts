@@ -1,4 +1,4 @@
-import {By} from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 import * as log from 'loglevel';
 
 log.setLevel('debug');

@@ -1,12 +1,12 @@
-import {promise, WebElement} from 'selenium-webdriver';
-import {Browser} from '../../browser';
-import {GetWebElements} from '../get_web_elements';
-import {isProtractorLocator, Locator} from '../../by/locator';
+import { WebElement } from 'selenium-webdriver';
+import { Browser } from '../../browser';
+import { GetWebElements } from '../get_web_elements';
+import { isProtractorLocator, Locator } from '../../by/locator';
 
 export function elementArrayFinderFactory(
     browser: Browser,
     locator: Locator): ElementArrayFinder {
-  let getWebElements: GetWebElements = (): promise.Promise<WebElement[]> => {
+  let getWebElements: GetWebElements = async (): Promise<WebElement[]> => {
     if (isProtractorLocator(locator)) {
       return locator.findElementsOverride(browser.driver, null);
     } else {

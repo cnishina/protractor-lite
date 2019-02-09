@@ -1,4 +1,4 @@
-import {By} from 'selenium-webdriver';
+import { By } from 'selenium-webdriver';
 
 /**
  * Explicitly define webdriver.By.

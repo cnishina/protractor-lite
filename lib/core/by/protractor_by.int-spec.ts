@@ -1,9 +1,9 @@
-import {ProtractorBy} from './protractor_by';
-import {buildElementHelper} from '../element';
-import {Browser} from '../browser';
+import { ProtractorBy } from './protractor_by';
+import { buildElementHelper } from '../element';
+import { Browser } from '../browser';
 
-import {HttpServer} from '../../../spec/server/http_server';
-import {startSession} from '../../../spec/support/test_utils';
+import { HttpServer } from '../../../spec/server/http_server';
+import { startSession } from '../../../spec/support/test_utils';
 
 const origTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
 const seleniumAddress = 'http://127.0.0.1:4444/wd/hub';

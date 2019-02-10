@@ -5,7 +5,7 @@ import {WebElement} from 'selenium-webdriver';
  */
 export interface GetWebElements extends Function {
   /**
-   * @returns promise for the web element array.
+   * @return promise for the web element array.
    */
   (): Promise<WebElement[]>;
 }

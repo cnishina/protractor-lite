@@ -7,7 +7,7 @@ export class ProtractorBy extends WebDriverBy {
   /**
    * Find a button by text.
    * @param {string} searchText
-   * @returns {ProtractorLocator} location strategy
+   * @return {ProtractorLocator} location strategy
    */
   buttonText(searchText: string): ProtractorLocator {
     return {

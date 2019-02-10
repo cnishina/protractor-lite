@@ -11,12 +11,12 @@ import { Locator } from '../by/locator';
 export interface ElementHelper extends Function {
   /**
    * A factory to create new ElementFinder based on the locator.
-   * @returns A new ElementFinder
+   * @return A new ElementFinder
    */
   (locator: Locator): ElementFinder;
   /**
    * A factory to create new ElementArrayFinder based on the locator.
-   * @returns A new ElementArrayFinder
+   * @return A new ElementArrayFinder
    */
   all?: (locator: Locator) => ElementArrayFinder;
 }
@@ -24,7 +24,7 @@ export interface ElementHelper extends Function {
 /**
  * Build the helper 'element' function for a given browser instance.
  * @param browser A browser instance.
- * @returns ElementHelper functions
+ * @return ElementHelper functions
  */
 export function buildElementHelper(browser: Browser): ElementHelper {
   let element: ElementHelper = (locator: Locator): ElementFinder => {

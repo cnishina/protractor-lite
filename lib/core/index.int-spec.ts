@@ -1,5 +1,5 @@
 import { By } from 'selenium-webdriver';
-import { build } from './protractor';
+import { build } from '.';
 
 import * as env from '../../spec/server/env';
 import { HttpServer } from '../../spec/server/http_server';

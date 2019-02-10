@@ -1,4 +1,5 @@
 import { Browser, BrowserConfig } from './browser';
+import { By } from './by';
 import { buildElementHelper } from './element';
 
 /**
@@ -6,10 +7,12 @@ import { buildElementHelper } from './element';
  * @param config A configuration object with a capabilities property.
  */
 export function build(config: BrowserConfig) {
-  let browser = new Browser(config);
-  let element = buildElementHelper(browser);
+  const browser = new Browser(config);
+  const by = new By();
+  const element = buildElementHelper(browser);
   return {
     browser,
+    by,
     element
   };
 }

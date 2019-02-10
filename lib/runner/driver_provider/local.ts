@@ -1,9 +1,9 @@
 import * as net from 'net';
 import * as wdm from 'webdriver-manager-replacement';
-import {WebDriver} from 'selenium-webdriver';
-import {Executor, HttpClient} from 'selenium-webdriver/http';
-import {Provider} from './provider';
-import {RunnerConfig} from '../runner_config';
+import { WebDriver } from 'selenium-webdriver';
+import { Executor, HttpClient } from 'selenium-webdriver/http';
+import { Provider } from './provider';
+import { RunnerConfig } from '../runner_config';
 
 export class Local implements Provider {
   options: wdm.Options;

@@ -1,4 +1,4 @@
-import {DirectConnect} from './direct_connect';
+import { DirectConnect } from './direct_connect';
 
 describe('direct_connect', () => {
   describe('class DirectConnect', () => {

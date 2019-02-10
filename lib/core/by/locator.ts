@@ -1,4 +1,4 @@
-import {By as wdBy, ByHash, WebDriver, WebElement} from 'selenium-webdriver';
+import { By as wdBy, ByHash, WebDriver, WebElement } from 'selenium-webdriver';
 
 /**
  * Selenium webdriver's location strategy.

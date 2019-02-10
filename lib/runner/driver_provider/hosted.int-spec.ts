@@ -1,5 +1,5 @@
 import * as wdm from 'webdriver-manager-replacement';
-import {Hosted} from './hosted';
+import { Hosted } from './hosted';
 
 const options: wdm.Options = {
   browserDrivers: [{name: 'chromedriver'}],

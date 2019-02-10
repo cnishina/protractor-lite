@@ -1,4 +1,4 @@
-import {ProtractorBy} from './protractor_by';
+import { ProtractorBy } from './protractor_by';
 
 describe('protractor_by', () => {
   let protractorBy: ProtractorBy;

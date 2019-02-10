@@ -1,111 +1,132 @@
-import {promise, WebElement} from 'selenium-webdriver';
-import {Browser} from '../browser';
-import {GetWebElements} from './get_web_elements';
-import {isProtractorLocator, Locator} from '../by/locator';
-import {wait} from '../wait';
+import { WebElement } from 'selenium-webdriver';
+import { Browser } from '../browser';
+import { GetWebElements } from './get_web_elements';
+import { isProtractorLocator, Locator } from '../by/locator';
+import { ActionOptions, runAction } from '../utils';
 
 export function elementFinderFactory(
     browser: Browser,
     locator: Locator): ElementFinder {
-  let getWebElements: GetWebElements = (): promise.Promise<WebElement[]> => {
+  let getWebElements: GetWebElements = async (): Promise<WebElement[]> => {
     if (isProtractorLocator(locator)) {
       return locator.findElementsOverride(browser.driver, null);
     } else {
-      return browser.driver.findElements(locator);
+      return await browser.driver.findElements(locator);
     }
   }
   return new ElementFinder(browser, locator, getWebElements);
 }
 
+const ACTION_OPTIONS: ActionOptions = {
+  retries: 1
+};
+
 export class ElementFinder {
 
-  constructor(
-    public browser: Browser,
-    public locator: Locator,
+  constructor(public browser: Browser, public locator: Locator,
     public getWebElements: GetWebElements) {
   }
 
-  beforeHook(){}
-  afterHook(){}
-
   /**
    * Clears the text from an input or textarea web element.
-   * @param waitStrategy
+   * @param actionOptions Optional options for retries and functionHooks.
+   * @return A promise to this object.
    */
-  async clear(waitStrategy?: string): Promise<ElementFinder> {
-    await wait(this.browser.defaultWaitStrategy, waitStrategy);
-    let webElements = await this.getWebElements();
-    await webElements[0].clear();
+  async clear(actionOptions: ActionOptions = ACTION_OPTIONS
+      ): Promise<ElementFinder> {
+    const action = async (): Promise<void> => {
+      const webElements = await this.getWebElements();
+      await webElements[0].clear();
+    };
+    await runAction(action, actionOptions, this.browser);
     return this;
   }
 
   /**
    * Clicks on a web element.
-   * @param waitStrategy
+   * @param actionOptions Optional options for retries and functionHooks.
+   * @return A promise to this object.
    */
-  async click(waitStrategy?: string): Promise<ElementFinder> {
-    await wait(this.browser.defaultWaitStrategy, waitStrategy);
-    let webElements = await this.getWebElements();
-    await webElements[0].click();
+  async click(actionOptions: ActionOptions = ACTION_OPTIONS
+      ): Promise<ElementFinder> {
+    // Gets the first web element matching the locator and clicks on it.
+    const action = async (): Promise<void> => {
+      const webElements = await this.getWebElements();
+      await webElements[0].click();
+    };
+    await runAction(action, actionOptions, this.browser);
     return this;
   }
 
   /**
    * Gets the value of the provided attribute name.
-   * @param attributeName
-   * @param waitStrategy
+   * @param attributeName The attribute key.
+   * @param actionOptions Optional options for retries and functionHooks.
+   * @return A promise to the attribute value.
    */
-  async getAttribute(
-      attributeName: string,
-      waitStrategy?: string): Promise<string> {
-    await wait(this.browser.defaultWaitStrategy, waitStrategy);
-    let webElements = await this.getWebElements();
-    let text = await webElements[0].getAttribute(attributeName);
-    return text;
+  getAttribute(attributeName: string,
+      actionOptions: ActionOptions = ACTION_OPTIONS): Promise<string> {
+    const action = async (): Promise<string> => {
+      const webElements = await this.getWebElements();
+      return await webElements[0].getAttribute(attributeName);
+    };
+    return runAction(action, actionOptions, this.browser);
   }
 
   /**
    * Gets the text contents from the html tag.
-   * @param waitStrategy
+   * @param actionOptions Optional options for retries and functionHooks.
+   * @return A promise to the text.
    */
-  async getText(waitStrategy?: string): Promise<string> {
-    await wait(this.browser.defaultWaitStrategy, waitStrategy);
-    let webElements = await this.getWebElements();
-    let text = await webElements[0].getText();
-    return text;
+  getText(actionOptions: ActionOptions = ACTION_OPTIONS
+      ): Promise<string> {
+    const action = async (): Promise<string> => {
+      const webElements = await this.getWebElements();
+     return await webElements[0].getText();
+    };
+    return runAction(action, actionOptions, this.browser);
   }
 
   /**
    * Whether the element is displayed.
-   * @param waitStrategy
+   * @param actionOptions Optional options for retries and functionHooks.
+   * @return A promise if the web element is displayed.
    */
-  async isDisplayed(waitStrategy?: string): Promise<boolean> {
-    await wait(this.browser.defaultWaitStrategy, waitStrategy);
-    let webElements = await this.getWebElements();
-    let result = await webElements[0].isDisplayed();
-    return result;
+  isDisplayed(actionOptions: ActionOptions = ACTION_OPTIONS
+      ): Promise<boolean> {
+    const action = async (): Promise<boolean> => {
+      const webElements = await this.getWebElements();
+      return await webElements[0].isDisplayed();
+    };
+    return runAction(action, actionOptions, this.browser);
   }
 
   /**
    * Whether the web element is enabled.
-   * @param waitStrategy
+   * @param actionOptions Optional options for retries and functionHooks.
+   * @return A promise if the web element is enabled.
    */
-  async isEnabled(waitStrategy?: string): Promise<boolean> {
-    await wait(this.browser.defaultWaitStrategy, waitStrategy);
-    let webElements = await this.getWebElements();
-    let result = await webElements[0].isEnabled();
-    return result;
+  isEnabled(actionOptions: ActionOptions = ACTION_OPTIONS
+      ): Promise<boolean> {
+    const action = async (): Promise<boolean> => {
+      const webElements = await this.getWebElements();
+      return await webElements[0].isEnabled();
+    };
+    return runAction(action, actionOptions, this.browser);
   }
 
   /**
    * Whether the element is currently selected.
-   * @param waitStrategy
+   * @param actionOptions Optional options for retries and functionHooks.
+   * @return A promise if the web element is selected.
    */
-  async isSelected(waitStrategy?: string): Promise<boolean> {
-    await wait(this.browser.defaultWaitStrategy, waitStrategy);
-    let webElements = await this.getWebElements();
-    let result = await webElements[0].isSelected();
-    return result;
+  isSelected(actionOptions: ActionOptions = ACTION_OPTIONS
+      ): Promise<boolean> {
+    const action = async (): Promise<boolean> => {
+      const webElements = await this.getWebElements();
+      return await webElements[0].isSelected();
+    };
+    return runAction(action, actionOptions, this.browser);
   }
 
   /**
@@ -113,9 +134,13 @@ export class ElementFinder {
    * @param keys
    * @param waitStrategy
    */
-  async sendKeys(keys: string|number, waitStrategy?: string): Promise<void> {
-    await wait(this.browser.defaultWaitStrategy, waitStrategy);
-    let webElements = await this.getWebElements();
-    await webElements[0].sendKeys(keys);
+  async sendKeys(keys: string|number,
+      actionOptions: ActionOptions = ACTION_OPTIONS): Promise<ElementFinder> {
+    const action = async (): Promise<void> => {
+      const webElements = await this.getWebElements();
+      return await webElements[0].sendKeys(keys);
+    };
+    await runAction(action, actionOptions, this.browser);
+    return this;
   }
 }

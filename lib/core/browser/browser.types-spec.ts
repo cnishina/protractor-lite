@@ -1,5 +1,5 @@
-import {Session, WebDriver} from 'selenium-webdriver';
-import {Executor, HttpClient} from 'selenium-webdriver/http';
+import { Session, WebDriver } from 'selenium-webdriver';
+import { Executor, HttpClient } from 'selenium-webdriver/http';
 import * as log from 'loglevel';
 
 log.setLevel('debug');

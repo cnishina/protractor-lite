@@ -1,6 +1,6 @@
-import {ProtractorLocator} from './locator';
-import {WebDriverBy} from './webdriver_by';
-import {By, WebDriver, WebElement} from 'selenium-webdriver';
+import { ProtractorLocator } from './locator';
+import { WebDriverBy } from './webdriver_by';
+import { By, WebDriver, WebElement } from 'selenium-webdriver';
 const clientSideScripts = require('../client_side/finders');
 
 export class ProtractorBy extends WebDriverBy {
@@ -14,8 +14,7 @@ export class ProtractorBy extends WebDriverBy {
       findElementsOverride: async (driver: WebDriver,
           using: WebElement): Promise<WebElement[]> => {
         let webElements = await driver.findElements(
-          By.js(clientSideScripts.findByButtonText, searchText,
-            using));
+          By.js(clientSideScripts.findByButtonText, searchText, using));
         return webElements;
       },
       toString: (): string => {

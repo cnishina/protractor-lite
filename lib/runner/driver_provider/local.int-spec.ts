@@ -1,5 +1,5 @@
 import * as net from 'net';
-import {Local} from './local';
+import { Local } from './local';
 
 describe('local', () => {
   const origTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;

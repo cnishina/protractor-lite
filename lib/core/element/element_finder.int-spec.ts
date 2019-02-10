@@ -1,11 +1,11 @@
 import {By} from 'selenium-webdriver';
 
-import {Browser} from '../browser';
-import {elementFinderFactory} from './element_finder';
+import { Browser } from '../browser';
+import { elementFinderFactory } from './element_finder';
 
 import * as env from '../../../spec/server/env';
-import {HttpServer} from '../../../spec/server/http_server';
-import {startSession} from '../../../spec/support/test_utils';
+import { HttpServer } from '../../../spec/server/http_server';
+import { startSession } from '../../../spec/support/test_utils';
 
 const origTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
 const page1 = `${env.httpBaseUrl}/spec/website/html/page1.html`;

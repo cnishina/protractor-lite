@@ -1,10 +1,10 @@
 import * as wdm from 'webdriver-manager-replacement';
 import * as loglevel from 'loglevel';
-import {Capabilities, WebDriver} from 'selenium-webdriver';
-import {Driver as ChromeDriver, ServiceBuilder as ChromeServiceBuilder} from 'selenium-webdriver/chrome';
-import {Driver as FirefoxDriver, ServiceBuilder as FirefoxServiceBuilder} from 'selenium-webdriver/firefox';
-import {Provider} from './provider';
-import {RunnerConfig} from '../runner_config';
+import { Capabilities, WebDriver } from 'selenium-webdriver';
+import { Driver as ChromeDriver, ServiceBuilder as ChromeServiceBuilder } from 'selenium-webdriver/chrome';
+import { Driver as FirefoxDriver, ServiceBuilder as FirefoxServiceBuilder } from 'selenium-webdriver/firefox';
+import { Provider } from './provider';
+import { RunnerConfig } from '../runner_config';
 
 const log = loglevel.getLogger('protractor');
 

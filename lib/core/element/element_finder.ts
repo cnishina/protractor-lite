@@ -68,7 +68,20 @@ export class ElementFinder {
       actionOptions: ActionOptions = ACTION_OPTIONS): Promise<string> {
     const action = async (): Promise<string> => {
       const webElements = await this.getWebElements();
-      return await webElements[0].getAttribute(attributeName);
+      return webElements[0].getAttribute(attributeName);
+    };
+    return runAction(action, actionOptions, this.browser);
+  }
+
+  /**
+   * Gets the tag name of the web element.
+   * @param actionOptions Optional options for retries and functionHooks.
+   * @return A promise to the tag name.
+   */
+  getTagName(actionOptions: ActionOptions = ACTION_OPTIONS): Promise<string> {
+    const action = async (): Promise<string> => {
+      const webElements = await this.getWebElements();
+      return webElements[0].getTagName();
     };
     return runAction(action, actionOptions, this.browser);
   }
@@ -82,7 +95,7 @@ export class ElementFinder {
       ): Promise<string> {
     const action = async (): Promise<string> => {
       const webElements = await this.getWebElements();
-     return await webElements[0].getText();
+      return webElements[0].getText();
     };
     return runAction(action, actionOptions, this.browser);
   }
@@ -96,7 +109,7 @@ export class ElementFinder {
       ): Promise<boolean> {
     const action = async (): Promise<boolean> => {
       const webElements = await this.getWebElements();
-      return await webElements[0].isDisplayed();
+      return webElements[0].isDisplayed();
     };
     return runAction(action, actionOptions, this.browser);
   }
@@ -110,7 +123,7 @@ export class ElementFinder {
       ): Promise<boolean> {
     const action = async (): Promise<boolean> => {
       const webElements = await this.getWebElements();
-      return await webElements[0].isEnabled();
+      return webElements[0].isEnabled();
     };
     return runAction(action, actionOptions, this.browser);
   }
@@ -124,7 +137,7 @@ export class ElementFinder {
       ): Promise<boolean> {
     const action = async (): Promise<boolean> => {
       const webElements = await this.getWebElements();
-      return await webElements[0].isSelected();
+      return webElements[0].isSelected();
     };
     return runAction(action, actionOptions, this.browser);
   }
@@ -138,7 +151,7 @@ export class ElementFinder {
       actionOptions: ActionOptions = ACTION_OPTIONS): Promise<ElementFinder> {
     const action = async (): Promise<void> => {
       const webElements = await this.getWebElements();
-      return await webElements[0].sendKeys(keys);
+      return webElements[0].sendKeys(keys);
     };
     await runAction(action, actionOptions, this.browser);
     return this;

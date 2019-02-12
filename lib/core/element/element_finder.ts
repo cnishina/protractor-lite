@@ -17,6 +17,13 @@ export function elementFinderFactory(
   return new ElementFinder(browser, locator, getWebElements);
 }
 
+export interface Rectangle {
+  width: number;
+  height: number;
+  x: number;
+  y: number;
+}
+
 const ACTION_OPTIONS: ActionOptions = {
   retries: 1
 };
@@ -72,6 +79,20 @@ export class ElementFinder {
   }
 
   /**
+   * Compares an element to this one for equality.
+   * @param webElement The element to compare to.
+   * @return A promise that will be resolved if they are equal.
+   */
+  async equals(webElement: ElementFinder | WebElement): Promise<boolean> {
+    const a = await this.getWebElement();
+    const b = (webElement['getWebElement']) ?
+      await (webElement as ElementFinder).getWebElement() :
+      webElement as WebElement;
+    return this._browser.execute<boolean>(
+      'return arguments[0] === arguments[1]', a, b);
+  }
+
+  /**
    * Gets the value of the provided attribute name.
    * @param attributeName The attribute key.
    * @param actionOptions Optional options for retries and functionHooks.
@@ -83,6 +104,35 @@ export class ElementFinder {
       const webElement = await this.getWebElement();
       return webElement.getAttribute(attributeName);
     };
+    return runAction(action, actionOptions, this._browser);
+  }
+
+  /**
+   * Retrieves the value of a computed style property for this instance.
+   * @param cssStyleProperty The name of the CSS style property to look up.
+   * @param actionOptions Optional options for retries and functionHooks.
+   * @return A promise that will be resolved with the requested CSS value.
+   */
+  getCssValue(cssStyleProperty: string,
+      actionOptions: ActionOptions = ACTION_OPTIONS): Promise<string> {
+    const action = async (): Promise<string> => {
+      const webElement = await this.getWebElement();
+      return webElement.getCssValue(cssStyleProperty);
+    };
+    return runAction(action, actionOptions, this._browser);
+  }
+
+  /**
+   * Returns an object describing an element's location, in pixels relative to
+   * the document element, and the element's size in pixels.
+   * @param actionOptions Optional options for retries and functionHooks.
+   * @return A rectangle.
+   */
+  getRect(actionOptions: ActionOptions = ACTION_OPTIONS): Promise<Rectangle> {
+    const action = async (): Promise<Rectangle> => {
+      const webElement = await this.getWebElement();
+      return (webElement as any).getRect();
+    }
     return runAction(action, actionOptions, this._browser);
   }
 
@@ -180,7 +230,8 @@ export class ElementFinder {
   /**
    * Send keys to the input field.
    * @param keys
-   * @param waitStrategy
+   * @param actionOptions Optional options for retries and functionHooks.
+   * @return A promise to this object.
    */
   async sendKeys(keys: string|number,
       actionOptions: ActionOptions = ACTION_OPTIONS): Promise<ElementFinder> {
@@ -188,6 +239,21 @@ export class ElementFinder {
       const webElement = await this.getWebElement();
       return webElement.sendKeys(keys);
     };
+    await runAction(action, actionOptions, this._browser);
+    return this;
+  }
+
+  /**
+   * Submits the form containing this element.
+   * @param actionOptions Optional options for retries and functionHooks.
+   * @return A promise to this object.
+   */
+  async submit(actionOptions: ActionOptions = ACTION_OPTIONS
+      ): Promise<ElementFinder> {
+    const action = async (): Promise<void> => {
+      const webElement = await this.getWebElement();
+      return webElement.submit();
+    }
     await runAction(action, actionOptions, this._browser);
     return this;
   }

@@ -87,6 +87,7 @@ export async function runAction<T>(action: () => Promise<T>,
         if (attempt !== retries) {
           log.warn('Attempt ${attempt} failed before action.', err);
         } else {
+          log.error('Failed to execute the before action.', err);
           throw err;
         }
         continue;
@@ -98,6 +99,7 @@ export async function runAction<T>(action: () => Promise<T>,
       if (attempt !== retries) {
         log.warn('Attempt ${attempt} failed to do action.', err);
       } else {
+        log.error('Failed to do the action.', err);
         throw err;
       }
       continue;
@@ -110,6 +112,7 @@ export async function runAction<T>(action: () => Promise<T>,
         if (attempt !== retries) {
           log.warn('Attempt ${attempt} failed after action.', err);
         } else {
+          log.error('Failed to execute the after action.', err);
           throw err;
         }
         continue;
@@ -120,4 +123,3 @@ export async function runAction<T>(action: () => Promise<T>,
   }
   return result;
 }
-  

@@ -18,8 +18,8 @@ export class Browser {
     this.driver = new WebDriver(session, executor);
   }
 
-  async execute(func: string|Function): Promise<void> {
-
+  async execute<T>(func: string|Function, ...args: any[]): Promise<T> {
+    return await this.driver.executeScript(func, args) as T;
   }
 
   /**

@@ -48,7 +48,7 @@ describe('element_array_finder', () => {
   describe('elementArrayFinderFactory', () => {
     it('should create a an elementArrayFinder object', () => {
       let elementArrayFinder = elementArrayFinderFactory(
-        browser, By.css('.foo'));
+        browser.driver, By.css('.foo'));
       expect(elementArrayFinder).not.toBeNull();
       expect(elementArrayFinder.constructor.name).toBe('ElementArrayFinder');
     });
@@ -57,7 +57,7 @@ describe('element_array_finder', () => {
   describe('ElementArrayFinder', () => {
     it('should find a list of web elements', async () => {
       let elementArrayFinder = elementArrayFinderFactory(
-        browser, By.css('.nav-page1'));
+        browser.driver, By.css('.nav-page1'));
       await browser.get(page2);
       let webElements = await elementArrayFinder.getWebElements();
       expect(webElements.length).toBe(5);

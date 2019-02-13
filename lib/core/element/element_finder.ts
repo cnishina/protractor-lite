@@ -244,7 +244,7 @@ export class ElementFinder {
    * Gets the locator strategy.
    * @return The locator object.
    */
-  locator(): Locator {
+  get locator(): Locator {
     return this._locator;
   }
 

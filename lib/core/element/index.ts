@@ -31,7 +31,7 @@ export function buildElementHelper(browser: Browser): ElementHelper {
     return elementFinderFactory(browser.driver, locator);
   }
   element['all'] = (locator: Locator): ElementArrayFinder => {
-    return elementArrayFinderFactory(browser, locator);
+    return elementArrayFinderFactory(browser.driver, locator);
   }
   return element;
 }

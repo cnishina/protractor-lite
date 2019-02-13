@@ -13,7 +13,7 @@ describe('element_array_finder', () => {
         seleniumSessionId: '12345'
       }); 
       const elementArrayFinder = elementArrayFinderFactory(
-        browser, By.css('.foo'));
+        browser.driver, By.css('.foo'));
       expect(elementArrayFinder).not.toBeNull();
       expect(elementArrayFinder.constructor.name).toBe('ElementArrayFinder');
     });

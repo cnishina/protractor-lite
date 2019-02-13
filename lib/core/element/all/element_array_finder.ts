@@ -1,25 +1,42 @@
-import { WebElement } from 'selenium-webdriver';
+import { WebDriver, WebElement } from 'selenium-webdriver';
 import { Browser } from '../../browser';
 import { GetWebElements } from '../get_web_elements';
 import { isProtractorLocator, Locator } from '../../by/locator';
 
 export function elementArrayFinderFactory(
-    browser: Browser,
+    driver: WebDriver|WebElement,
     locator: Locator): ElementArrayFinder {
   let getWebElements: GetWebElements = async (): Promise<WebElement[]> => {
     if (isProtractorLocator(locator)) {
-      return locator.findElementsOverride(browser.driver, null);
+      return locator.findElementsOverride(driver, null);
     } else {
-      return browser.driver.findElements(locator);
+      return driver.findElements(locator);
     }
   }
-  return new ElementArrayFinder(browser, locator, getWebElements);
+  return new ElementArrayFinder(driver, locator, getWebElements);
 }
 
 export class ElementArrayFinder {
   constructor(
-    public browser: Browser,
-    public locator: Locator,
+    private _driver: WebDriver|WebElement,
+    private _locator: Locator,
     public getWebElements: GetWebElements) {
+  }
+
+  /**
+   * Gets the parent driver.
+   * @return The WebDriver parent object.
+   */
+  async getDriver(): Promise<WebDriver> {
+    const webElements = await this.getWebElements();
+    return webElements[0].getDriver();
+  }
+
+  /**
+   * Gets the locator strategy.
+   * @return The locator object.
+   */
+  get locator(): Locator {
+    return this._locator;
   }
 }

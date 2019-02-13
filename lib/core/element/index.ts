@@ -28,7 +28,7 @@ export interface ElementHelper extends Function {
  */
 export function buildElementHelper(browser: Browser): ElementHelper {
   let element: ElementHelper = (locator: Locator): ElementFinder => {
-    return elementFinderFactory(browser, locator);
+    return elementFinderFactory(browser.driver, locator);
   }
   element['all'] = (locator: Locator): ElementArrayFinder => {
     return elementArrayFinderFactory(browser, locator);

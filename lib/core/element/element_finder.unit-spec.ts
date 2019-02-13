@@ -12,7 +12,8 @@ describe('element_finder', () => {
         seleniumAddress: 'http://127.0.0.1:4444/wd/hub',
         seleniumSessionId: '12345'
       });
-      const elementFinder = elementFinderFactory(browser, By.css('.foo'));
+      const elementFinder = elementFinderFactory(
+        browser.driver, By.css('.foo'));
       expect(elementFinder).not.toBeNull();
       expect(elementFinder.constructor.name).toBe('ElementFinder');
     });

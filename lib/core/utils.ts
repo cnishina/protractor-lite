@@ -1,5 +1,5 @@
 import * as loglevel from 'loglevel';
-import { Browser } from './browser';
+import { WebDriver, WebElement } from 'selenium-webdriver';
 
 const log = loglevel.getLogger('protractor');
 
@@ -48,22 +48,28 @@ async function executeLocal(hook: Hook): Promise<void> {
   }
 }
 
-async function executeClientSide(browser: Browser,
+async function executeClientSide(driver: WebDriver|WebElement,
     hook: Hook): Promise<void> {
   if (hook.browser) {
     for (let func of hook.browser) {
-      await browser.execute(func);
+      if (driver instanceof WebElement) {
+        await driver.getDriver().executeScript(func);
+      } else {
+        await driver.executeScript(func);
+      }
     }
   }
 }
 
-async function executeBefore(browser: Browser, hook: Hook): Promise<void> {
+async function executeBefore(driver: WebDriver|WebElement, hook: Hook
+    ): Promise<void> {
   await executeLocal(hook);
-  await executeClientSide(browser, hook);
+  await executeClientSide(driver, hook);
 }
 
-async function executeAfter(browser: Browser, hook: Hook): Promise<void> {
-  await executeClientSide(browser, hook);
+async function executeAfter(driver: WebDriver|WebElement, hook: Hook
+    ): Promise<void> {
+  await executeClientSide(driver, hook);
   await executeLocal(hook);
 }
 
@@ -75,14 +81,14 @@ async function executeAfter(browser: Browser, hook: Hook): Promise<void> {
  */
 export async function runAction<T>(action: () => Promise<T>,
     actionOptions: ActionOptions,
-    browser: Browser): Promise<T> {
+    driver: WebDriver|WebElement): Promise<T> {
   const hooks = actionOptions.hooks;
   const retries = actionOptions.retries || 1;
   let result = null;
   for (let attempt = 1; attempt <= retries; attempt++) {
     if (hooks && hooks.before) {
       try {
-        await executeBefore(browser, hooks.before);
+        await executeBefore(driver, hooks.before);
       } catch (err) {
         if (attempt !== retries) {
           log.warn('Attempt ${attempt} failed before action.', err);
@@ -107,7 +113,7 @@ export async function runAction<T>(action: () => Promise<T>,
 
     if (hooks && hooks.after) {
       try {
-        await executeAfter(browser, hooks.after);
+        await executeAfter(driver, hooks.after);
       } catch (err) {
         if (attempt !== retries) {
           log.warn('Attempt ${attempt} failed after action.', err);
@@ -124,6 +130,9 @@ export async function runAction<T>(action: () => Promise<T>,
   return result;
 }
 
+/**
+ * Interface for WebElement rectangles to find the position and dimensions.
+ */
 export interface Rectangle {
   width: number;
   height: number;

@@ -1,20 +1,19 @@
-import { WebElement } from 'selenium-webdriver';
-import { Browser } from '../browser';
+import { WebElement, WebDriver } from 'selenium-webdriver';
 import { GetWebElements } from './get_web_elements';
 import { isProtractorLocator, Locator } from '../by/locator';
 import { ActionOptions, Rectangle, runAction } from '../utils';
 
 export function elementFinderFactory(
-    browser: Browser,
+    driver: WebDriver|WebElement,
     locator: Locator): ElementFinder {
   let getWebElements: GetWebElements = async (): Promise<WebElement[]> => {
     if (isProtractorLocator(locator)) {
-      return locator.findElementsOverride(browser.driver, null);
+      return locator.findElementsOverride(driver, null);
     } else {
-      return await browser.driver.findElements(locator);
+      return await driver.findElements(locator);
     }
   }
-  return new ElementFinder(browser, locator, getWebElements);
+  return new ElementFinder(driver, locator, getWebElements);
 }
 
 const ACTION_OPTIONS: ActionOptions = {
@@ -23,7 +22,7 @@ const ACTION_OPTIONS: ActionOptions = {
 
 export class ElementFinder {
 
-  constructor(private _browser: Browser, private _locator: Locator,
+  constructor(private _driver: WebDriver|WebElement, private _locator: Locator,
     private _getWebElements: GetWebElements) {
   }
 
@@ -38,7 +37,7 @@ export class ElementFinder {
       const webElement = await this.getWebElement();
       await webElement.clear();
     };
-    await runAction(action, actionOptions, this._browser);
+    await runAction(action, actionOptions, this._driver);
     return this;
   }
 
@@ -54,7 +53,7 @@ export class ElementFinder {
       const webElement = await this.getWebElement();
       await webElement.click();
     };
-    await runAction(action, actionOptions, this._browser);
+    await runAction(action, actionOptions, this._driver);
     return this;
   }
 
@@ -81,8 +80,20 @@ export class ElementFinder {
     const b = (webElement['getWebElement']) ?
       await (webElement as ElementFinder).getWebElement() :
       webElement as WebElement;
-    return this._browser.execute<boolean>(
+    const driver = await this.getDriver();
+    return driver.executeScript<boolean>(
       'return arguments[0] === arguments[1]', a, b);
+  }
+
+  /**
+   * Finds the WebElement within this WebElement.
+   * @param locator The locator strategy.
+   * @return A promise to the WebElement within this WebElement.
+   */
+  async findElement(locator: Locator): Promise<WebElement> {
+    const webElement = await this.getWebElement();
+    const elementFinder = elementFinderFactory(webElement, locator);
+    return elementFinder.getWebElement();
   }
 
   /**
@@ -97,7 +108,7 @@ export class ElementFinder {
       const webElement = await this.getWebElement();
       return webElement.getAttribute(attributeName);
     };
-    return runAction(action, actionOptions, this._browser);
+    return runAction(action, actionOptions, this._driver);
   }
 
   /**
@@ -112,7 +123,16 @@ export class ElementFinder {
       const webElement = await this.getWebElement();
       return webElement.getCssValue(cssStyleProperty);
     };
-    return runAction(action, actionOptions, this._browser);
+    return runAction(action, actionOptions, this._driver);
+  }
+
+  /**
+   * Gets the parent driver.
+   * @return The WebDriver parent object.
+   */
+  async getDriver(): Promise<WebDriver> {
+    const webElement = await this.getWebElement();
+    return webElement.getDriver();
   }
 
   /**
@@ -126,7 +146,7 @@ export class ElementFinder {
       const webElement = await this.getWebElement();
       return (webElement as any).getRect();
     }
-    return runAction(action, actionOptions, this._browser);
+    return runAction(action, actionOptions, this._driver);
   }
 
   /**
@@ -139,7 +159,7 @@ export class ElementFinder {
       const webElement = await this.getWebElement();
       return webElement.getTagName();
     };
-    return runAction(action, actionOptions, this._browser);
+    return runAction(action, actionOptions, this._driver);
   }
 
   /**
@@ -153,7 +173,7 @@ export class ElementFinder {
       const webElement = await this.getWebElement();
       return webElement.getText();
     };
-    return runAction(action, actionOptions, this._browser);
+    return runAction(action, actionOptions, this._driver);
   }
 
   /**
@@ -177,7 +197,7 @@ export class ElementFinder {
       const webElement = await this.getWebElement();
       return webElement.isDisplayed();
     };
-    return runAction(action, actionOptions, this._browser);
+    return runAction(action, actionOptions, this._driver);
   }
 
   /**
@@ -191,7 +211,7 @@ export class ElementFinder {
       const webElement = await this.getWebElement();
       return webElement.isEnabled();
     };
-    return runAction(action, actionOptions, this._browser);
+    return runAction(action, actionOptions, this._driver);
   }
 
   /**
@@ -203,7 +223,7 @@ export class ElementFinder {
     const action = async (): Promise<boolean> => {
       return await this.count() >= 1;
     };
-    return runAction(action, actionOptions, this._browser);
+    return runAction(action, actionOptions, this._driver);
   }
 
   /**
@@ -217,7 +237,15 @@ export class ElementFinder {
       const webElement = await this.getWebElement();
       return webElement.isSelected();
     };
-    return runAction(action, actionOptions, this._browser);
+    return runAction(action, actionOptions, this._driver);
+  }
+
+  /**
+   * Gets the locator strategy.
+   * @return The locator object.
+   */
+  locator(): Locator {
+    return this._locator;
   }
 
   /**
@@ -232,7 +260,7 @@ export class ElementFinder {
       const webElement = await this.getWebElement();
       return webElement.sendKeys(keys);
     };
-    await runAction(action, actionOptions, this._browser);
+    await runAction(action, actionOptions, this._driver);
     return this;
   }
 
@@ -247,7 +275,7 @@ export class ElementFinder {
       const webElement = await this.getWebElement();
       return webElement.submit();
     }
-    await runAction(action, actionOptions, this._browser);
+    await runAction(action, actionOptions, this._driver);
     return this;
   }
 }

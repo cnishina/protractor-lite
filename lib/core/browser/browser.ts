@@ -8,18 +8,23 @@ const ACTION_OPTIONS: ActionOptions = {
 };
 
 export class Browser {
-  driver: WebDriver;
-  session: Session;
+  private _driver: WebDriver;
+  private _session: Session;
 
-  constructor(public browserConfig?: BrowserConfig) {
-    const httpClient = new HttpClient(this.browserConfig.seleniumAddress);
+  constructor(private _browserConfig?: BrowserConfig) {
+    const httpClient = new HttpClient(this._browserConfig.seleniumAddress);
     const executor = new Executor(httpClient);
-    const session = new Session(this.browserConfig.seleniumSessionId, null);
-    this.driver = new WebDriver(session, executor);
+    this._session = new Session(this._browserConfig.seleniumSessionId, null);
+    this._driver = new WebDriver(this._session, executor);
   }
 
-  async execute<T>(func: string|Function, ...args): Promise<T> {
-    return await this.driver.executeScript(func) as T;
+  /**
+   * Executes the script and returns the result as T.
+   * @param func The function represented as a string or a function.
+   * @param args Arguments for the func.
+   */
+  async execute<T>(func: string|Function, ...args: any[]): Promise<T> {
+    return await this._driver.executeScript(func, args) as T;
   }
 
   /**
@@ -30,9 +35,17 @@ export class Browser {
   async get(url: string,
       actionOptions: ActionOptions = ACTION_OPTIONS): Promise<void> {
     const action = async (): Promise<void> => {
-      await this.driver.get(url);
+      await this._driver.get(url);
     };
-    return runAction(action, actionOptions, this);
+    return runAction(action, actionOptions, this._driver);
+  }
+
+  /**
+   * Returns the WebDriver running the session.
+   * @return The WebDriver object.
+   */
+  get driver(): WebDriver {
+    return this._driver;
   }
 
   /**
@@ -42,9 +55,9 @@ export class Browser {
   async getCurrentUrl(
       actionOptions: ActionOptions = ACTION_OPTIONS): Promise<string> {
     const action = async (): Promise<string> => {
-      return await this.driver.getCurrentUrl();
+      return await this._driver.getCurrentUrl();
     };
-    return runAction(action, actionOptions, this);
+    return runAction(action, actionOptions, this._driver);
   }
 
   /**
@@ -54,15 +67,15 @@ export class Browser {
   async getTitle(
       actionOptions: ActionOptions = ACTION_OPTIONS): Promise<string> {
     const action = async (): Promise<string> => {
-      return await this.driver.getTitle();
+      return await this._driver.getTitle();
     };
-    return runAction(action, actionOptions, this);
+    return runAction(action, actionOptions, this._driver);
   }
 
   /**
    * Quits this browser session.
    */
   async quit(): Promise<void> {
-    await this.driver.quit();
+    await this._driver.quit();
   }
 }

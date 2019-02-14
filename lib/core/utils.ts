@@ -48,26 +48,22 @@ async function executeLocal(hook: Hook): Promise<void> {
   }
 }
 
-async function executeClientSide(driver: WebDriver|WebElement,
+async function executeClientSide(driver: WebDriver,
     hook: Hook): Promise<void> {
   if (hook.browser) {
     for (let func of hook.browser) {
-      if (driver instanceof WebElement) {
-        await driver.getDriver().executeScript(func);
-      } else {
-        await driver.executeScript(func);
-      }
+      await driver.executeScript(func);
     }
   }
 }
 
-async function executeBefore(driver: WebDriver|WebElement, hook: Hook
+async function executeBefore(driver: WebDriver, hook: Hook
     ): Promise<void> {
   await executeLocal(hook);
   await executeClientSide(driver, hook);
 }
 
-async function executeAfter(driver: WebDriver|WebElement, hook: Hook
+async function executeAfter(driver: WebDriver, hook: Hook
     ): Promise<void> {
   await executeClientSide(driver, hook);
   await executeLocal(hook);
@@ -77,11 +73,16 @@ async function executeAfter(driver: WebDriver|WebElement, hook: Hook
  * Runs an action with options.
  * @param action The action function to execute that returns a Promise T.
  * @param actionOptions The options for retries, before and after hooks.
+ * @param webElementOrWebDriver The WebDriver or WebElement object.
  * @return A promise to the return type of the action.
  */
 export async function runAction<T>(action: () => Promise<T>,
     actionOptions: ActionOptions,
-    driver: WebDriver|WebElement): Promise<T> {
+    webElementOrWebDriver: WebDriver|WebElement): Promise<T> {
+  let driver: WebDriver;
+  if (webElementOrWebDriver instanceof WebElement) {
+    driver = await webElementOrWebDriver.getDriver();
+  }
   const hooks = actionOptions.hooks;
   const retries = actionOptions.retries || 1;
   let result = null;

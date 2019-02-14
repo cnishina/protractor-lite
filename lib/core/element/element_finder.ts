@@ -96,6 +96,21 @@ export class ElementFinder {
     return elementFinder.getWebElement();
   }
 
+  static async fromWebElement(driver: WebDriver|WebElement, locator: Locator
+      ): Promise<ElementFinder> {
+    if (driver instanceof WebElement) {
+      driver = await driver.getDriver();
+    }
+    const getWebElements = async (): Promise<WebElement[]> => {
+      if (isProtractorLocator(locator)) {
+        return locator.findElementsOverride(driver, null);
+      } else {
+        return await driver.findElements(locator);
+      }
+    }
+    return new ElementFinder(driver, locator, getWebElements);
+  }
+
   /**
    * Gets the value of the provided attribute name.
    * @param attributeName The attribute key.
@@ -136,6 +151,11 @@ export class ElementFinder {
   }
 
   /**
+   * Alias for getRect.
+   */
+  getLocation = this.getRect;
+
+  /**
    * Returns an object describing an element's location, in pixels relative to
    * the document element, and the element's size in pixels.
    * @param actionOptions Optional options for retries and functionHooks.
@@ -148,6 +168,11 @@ export class ElementFinder {
     }
     return runAction(action, actionOptions, this._driver);
   }
+
+  /**
+   * Alias for getRect.
+   */
+  getSize = this.getRect;
 
   /**
    * Gets the tag name of the web element.
@@ -201,6 +226,11 @@ export class ElementFinder {
   }
 
   /**
+   * Alias for isPresent
+   */
+  isElementPresent = this.isPresent;
+
+  /**
    * Whether the web element is enabled.
    * @param actionOptions Optional options for retries and functionHooks.
    * @return A promise if the web element is enabled.
@@ -215,13 +245,24 @@ export class ElementFinder {
   }
 
   /**
-   * Checks if the web element is present.
+   * Checks if the web element is present. If provided with a locatorOrElement,
+   * it get the ElementFinder for the locatorOrElement
+   * @param locator Opt locator to find a WebElement within this WebElement
    * @param actionOptions Optional options for retries and functionHooks.
    */
-  isPresent(actionOptions: ActionOptions = ACTION_OPTIONS
+  async isPresent(locator?: Locator,
+    actionOptions: ActionOptions = ACTION_OPTIONS
       ): Promise<boolean> {
     const action = async (): Promise<boolean> => {
-      return await this.count() >= 1;
+      if (locator) {
+        // Get the element if it is within this element and check the count.
+        const elementFinder = elementFinderFactory(
+          await this.getWebElement(), locator);
+        return await elementFinder.count() >= 1;
+      } else {
+        // The default action to check if this exists.
+        return await this.count() >= 1;
+      }
     };
     return runAction(action, actionOptions, this._driver);
   }

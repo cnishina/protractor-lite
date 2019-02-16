@@ -3,6 +3,8 @@ import { ElementArrayFinder, elementArrayFinderFactory } from './all';
 import { ElementFinder, elementFinderFactory } from './element_finder';
 import { Locator } from '../by/locator';
 
+export { ElementFinder, elementFinderFactory } from './element_finder';
+
 /**
  * The ElementHelper interface allows to create the factory functions:
  *   element(locator) => ElementFinder

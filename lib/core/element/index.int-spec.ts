@@ -53,7 +53,7 @@ describe('index', () => {
       });
 
       it('should click on an element', async () => {
-        let element = buildElementHelper(browser);
+        let element = buildElementHelper(browser.driver);
         await element(By.css('.nav-page2')).click();
         expect(await browser.driver.getCurrentUrl()).toBe(page2);
       });

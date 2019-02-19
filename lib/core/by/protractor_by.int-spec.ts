@@ -46,7 +46,7 @@ describe('protractor_by', () => {
 
     it('should find a button by text', async () => {
       await browser.get('http://127.0.0.1:8812/spec/website/html/page1.html');
-      let element = buildElementHelper(browser);
+      let element = buildElementHelper(browser.driver);
       let by = new ProtractorBy();
       await element(by.buttonText('button enabled')).click();
       expect(await browser.getTitle()).toBe('page 2');

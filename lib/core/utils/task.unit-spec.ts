@@ -1,30 +1,38 @@
 import { WebDriver } from 'selenium-webdriver';
-import { executeLocal, executeClientSide } from './action_hooks';
-import { Hook } from './action_options';
+import { executeLocal, executeClientSide } from './task';
+import { SharedResults, Task } from './task_options';
 
 describe('action_hooks', () => {
   describe('executeLocal', () => {
     it('should', async () => {
       let val = 0;
-      const hook: Hook = {
+      const task: Task = {
         local: [
-          () => { val++ },
+          (sharedResults: SharedResults) => {
+            val++;
+            sharedResults['value'] = val;
+          },
           () => { val++ }
         ]
       };
   
-      await executeLocal(hook);
+      const sharedResults: SharedResults = {};
+      await executeLocal(task, sharedResults);
       expect (val).toBe(2);
+      expect (sharedResults['value']).toBe(1);
     });
   });
 
   describe('executeClientSide', () => {
     it('should', async () => {
       let val = 0;
-      const hook: Hook = {
+      const task: Task = {
         browser: [
-          () => { val++ },
-          () => { val++ }
+          {
+            func: () => { val++ }
+          }, {
+            func: () => { val++ }
+          }
         ]
       };
       class MockDriver extends WebDriver {
@@ -39,7 +47,7 @@ describe('action_hooks', () => {
         }
       }
       const driver = new MockDriver(null, null);
-      await executeClientSide(driver, hook);
+      await executeClientSide(task, driver);
       expect (val).toBe(2);
     });
   });

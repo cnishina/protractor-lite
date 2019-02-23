@@ -1,7 +1,7 @@
 import * as log from 'loglevel';
 import { By } from 'selenium-webdriver';
 import { Browser } from '../browser';
-import { buildElementHelper } from './index';
+import { buildElement } from './index';
 
 import * as env from '../../../spec/server/env';
 import { HttpServer } from '../../../spec/server/http_server';
@@ -14,10 +14,10 @@ const seleniumAddress = 'http://127.0.0.1:4444/wd/hub';
 const httpServer = new HttpServer();
 const origTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
 const capabilities = {
-    browserName: 'chrome',
-    chromeOptions: {
-        args: ['--headless', '--disable-gpu', '--noSandbox']
-    },
+  browserName: 'chrome',
+  chromeOptions: {
+    args: ['--headless', '--disable-gpu', '--noSandbox']
+  }
 };
 
 describe('index', () => {
@@ -39,7 +39,7 @@ describe('index', () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = origTimeout;
   });
 
-  describe('buildElementHelper', () => {
+  describe('buildElement', () => {
     describe('when browsing to the page', () => {
       beforeAll(async () => {
         const seleniumSessionId = await startSession(
@@ -53,7 +53,7 @@ describe('index', () => {
       });
 
       it('should click on an element', async () => {
-        let element = buildElementHelper(browser.driver);
+        const element = buildElement(browser.driver);
         await element(By.css('.nav-page2')).click();
         expect(await browser.driver.getCurrentUrl()).toBe(page2);
       });

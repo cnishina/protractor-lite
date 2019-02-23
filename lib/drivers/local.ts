@@ -1,15 +1,15 @@
 import * as net from 'net';
-import * as wdm from 'webdriver-manager-replacement';
+import * as wdm from 'webdriver-manager';
 import { WebDriver } from 'selenium-webdriver';
 import { Executor, HttpClient } from 'selenium-webdriver/http';
 import { Provider } from './provider';
-import { RunnerConfig } from '../runner_config';
+import { DriverConfig } from "./driver_config";
 
 export class Local implements Provider {
   options: wdm.Options;
-  constructor(public runnerConfig: RunnerConfig) {
+  constructor(public config: DriverConfig) {
     // Generate the options for webdriver-manager to start the selenium server.
-    const outDir = this.runnerConfig.outDir || "downloads";
+    const outDir = this.config.outDir || "downloads";
     this.options = {
       browserDrivers: [],
       outDir
@@ -45,7 +45,7 @@ export class Local implements Provider {
    */
   async getDriver(): Promise<WebDriver> {
     const port = await this.findPort(
-      this.runnerConfig.portRangeStart, this.runnerConfig.portRangeEnd);
+      this.config.portRangeStart, this.config.portRangeEnd);
     const seleniumAddress = `http://127.0.0.1:${port}/wd/hub`;
     this.options.server.port = port;
 

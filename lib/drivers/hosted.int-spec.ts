@@ -1,4 +1,4 @@
-import * as wdm from 'webdriver-manager-replacement';
+import * as wdm from 'webdriver-manager';
 import { Hosted } from './hosted';
 
 const options: wdm.Options = {

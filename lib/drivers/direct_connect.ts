@@ -1,15 +1,15 @@
-import * as wdm from 'webdriver-manager-replacement';
+import * as wdm from 'webdriver-manager';
 import * as loglevel from 'loglevel';
 import { Capabilities, WebDriver } from 'selenium-webdriver';
 import { Driver as ChromeDriver, ServiceBuilder as ChromeServiceBuilder } from 'selenium-webdriver/chrome';
 import { Driver as FirefoxDriver, ServiceBuilder as FirefoxServiceBuilder } from 'selenium-webdriver/firefox';
 import { Provider } from './provider';
-import { RunnerConfig } from '../runner_config';
+import { DriverConfig } from "./driver_config";
 
 const log = loglevel.getLogger('protractor');
 
 export class DirectConnect implements Provider {
-  constructor(public runnerConfig: RunnerConfig) {}
+  constructor(public config: DriverConfig) {}
 
   /**
    * Gets the driver generated from directly connecting to the browser driver.
@@ -17,16 +17,16 @@ export class DirectConnect implements Provider {
    */
   async getDriver(): Promise<WebDriver> {
     let driver: WebDriver;
-    const outDir = this.runnerConfig.outDir || "downloads";
-    if (this.runnerConfig.capabilities.browserName === 'chrome') {
+    const outDir = this.config.outDir || "downloads";
+    if (this.config.capabilities.browserName === 'chrome') {
       const chromeDriverPath = new wdm.ChromeDriver({outDir}).getBinaryPath();
       driver = ChromeDriver.createSession(
-        new Capabilities(this.runnerConfig.capabilities),
+        new Capabilities(this.config.capabilities),
         new ChromeServiceBuilder(chromeDriverPath).build());
-    } else if (this.runnerConfig.capabilities.browserName === 'firefox') {
+    } else if (this.config.capabilities.browserName === 'firefox') {
       const geckoDriverPath = new wdm.GeckoDriver({outDir}).getBinaryPath();
       driver = FirefoxDriver.createSession(
-        new Capabilities(this.runnerConfig.capabilities),
+        new Capabilities(this.config.capabilities),
         new FirefoxServiceBuilder(geckoDriverPath).build());
     } else {
       log.warn('Browser provided is not supported.')

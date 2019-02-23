@@ -1,0 +1,14 @@
+import { BrowserConfig, build } from '../../../../../protractor-lite/lib/core';
+
+const seleniumAddress = 'http://127.0.0.1:4444/wd/hub';
+const seleniumSessionId = '1234';
+const config: BrowserConfig = { seleniumAddress, seleniumSessionId };
+const url = 'http://127.0.0.1:4200/api#button-overview';
+
+describe('button-overview', () => {
+  it('should click the button', async () => {
+    <span style="color:red">const</span> { browser, by, element } = build(config);
+    await browser.get(url);
+    await element(by.css('button#button-overview')).click();
+  });
+});

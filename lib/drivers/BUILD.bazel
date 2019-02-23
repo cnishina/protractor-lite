@@ -10,6 +10,7 @@ ts_library(
         "index.ts",
         "local.ts",
         "provider.ts",
+        "runner_config.ts",
     ],
     data = [
         "//:downloads",
@@ -21,7 +22,6 @@ ts_library(
         "@npm//loglevel",
         "@npm//selenium-webdriver",
         "@npm//webdriver-manager-replacement",
-        "//lib/runner:runner_config",
     ],
 )
 

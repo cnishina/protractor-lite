@@ -1,5 +1,5 @@
 import { ProtractorBy } from './protractor_by';
-import { buildElementHelper } from '../element';
+import { buildElement } from '../element';
 import { Browser } from '../browser';
 
 import { HttpServer } from '../../../spec/server/http_server';
@@ -46,8 +46,8 @@ describe('protractor_by', () => {
 
     it('should find a button by text', async () => {
       await browser.get('http://127.0.0.1:8812/spec/website/html/page1.html');
-      const element = buildElementHelper(browser.driver);
-      const by = new ProtractorBy();
+      let element = buildElement(browser.driver);
+      let by = new ProtractorBy();
       await element(by.buttonText('button enabled')).click();
       expect(await browser.getTitle()).toBe('page 2');
     });

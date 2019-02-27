@@ -1,9 +1,10 @@
-import { Browser } from '../browser';
-import { ElementArrayFinder, elementArrayFinderFactory } from './all';
+import { WebDriver, WebElement } from 'selenium-webdriver';
 import { ElementFinder, elementFinderFactory } from './element_finder';
+import { ElementArrayFinder, elementArrayFinderFactory } from './all';
 import { Locator } from '../by/locator';
 
-export { ElementFinder, elementFinderFactory } from './element_finder';
+export { ElementFinder } from './element_finder';
+export { ElementArrayFinder } from './all';
 
 /**
  * The ElementHelper interface allows to create the factory functions:
@@ -25,15 +26,16 @@ export interface ElementHelper extends Function {
 
 /**
  * Build the helper 'element' function for a given browser instance.
- * @param browser A browser instance.
+ * @param driver A WebDriver or WebElement instance.
  * @return ElementHelper functions
  */
-export function buildElementHelper(browser: Browser): ElementHelper {
+export function buildElementHelper(
+    driver: WebDriver|WebElement): ElementHelper {
   let element: ElementHelper = (locator: Locator): ElementFinder => {
-    return elementFinderFactory(browser.driver, locator);
+    return elementFinderFactory(driver, locator);
   }
   element['all'] = (locator: Locator): ElementArrayFinder => {
-    return elementArrayFinderFactory(browser.driver, locator);
+    return elementArrayFinderFactory(driver, locator);
   }
   return element;
 }

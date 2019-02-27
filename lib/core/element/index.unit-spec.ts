@@ -11,12 +11,12 @@ describe('buildElementHelper', () => {
   });
 
   it('should build element function', () => {
-    let element = buildElementHelper(browser);
+    const element = buildElementHelper(browser.driver);
     expect(typeof element).toBe('function');
   });
 
   it('should build element function', () => {
-    let element = buildElementHelper(browser);
+    const element = buildElementHelper(browser.driver);
     expect(typeof element.all).toBe('function');
   });
 });

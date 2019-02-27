@@ -1,16 +1,19 @@
 import { WebElement, WebDriver } from 'selenium-webdriver';
 import { GetWebElements } from './get_web_elements';
+import { ElementHelper } from './';
+import { elementArrayFinderFactory, ElementArrayFinder } from './all';
 import { isProtractorLocator, Locator } from '../by/locator';
 import { ActionOptions, Rectangle, runAction } from '../utils';
 
 export function elementFinderFactory(
-    driver: WebDriver|WebElement,
+    driver: WebDriver|WebElement|Promise<WebDriver|WebElement>,
     locator: Locator): ElementFinder {
   let getWebElements: GetWebElements = async (): Promise<WebElement[]> => {
+    const awaitedDriver = await driver;
     if (isProtractorLocator(locator)) {
-      return locator.findElementsOverride(driver, null);
+      return locator.findElementsOverride(awaitedDriver, null);
     } else {
-      return await driver.findElements(locator);
+      return (await awaitedDriver).findElements(locator);
     }
   }
   return new ElementFinder(driver, locator, getWebElements);
@@ -22,7 +25,9 @@ const ACTION_OPTIONS: ActionOptions = {
 
 export class ElementFinder {
 
-  constructor(private _driver: WebDriver|WebElement, private _locator: Locator,
+  constructor(
+    private _driver: WebDriver|WebElement|Promise<WebDriver|WebElement>,
+    private _locator: Locator,
     private _getWebElements: GetWebElements) {
   }
 
@@ -59,56 +64,92 @@ export class ElementFinder {
 
   /**
    * The count of web elements.
+   * @param actionOptions Optional options for retries and functionHooks.
    * @return A promise of the number of elements matching the locator.
    */
-  async count(): Promise<number> {
-    try {
-      const webElements = await this._getWebElements();
-      return webElements.length;
-    } catch (err) {
-      throw err;
-    }
+  count(actionOptions: ActionOptions = ACTION_OPTIONS): Promise<number> {
+    const action = async(): Promise<number> => {
+      try {
+        const webElements = await this._getWebElements();
+        return webElements.length;
+      } catch (err) {
+        throw err;
+      }
+    };
+    return runAction(action, actionOptions, this._driver);
   }
 
   /**
    * Compares an element to this one for equality.
    * @param webElement The element to compare to.
+   * @param actionOptions Optional options for retries and functionHooks.
    * @return A promise that will be resolved if they are equal.
    */
-  async equals(webElement: ElementFinder | WebElement): Promise<boolean> {
-    const a = await this.getWebElement();
-    const b = (webElement['getWebElement']) ?
-      await (webElement as ElementFinder).getWebElement() :
-      webElement as WebElement;
-    const driver = await this.getDriver();
-    return driver.executeScript<boolean>(
-      'return arguments[0] === arguments[1]', a, b);
+  async equals(webElement: ElementFinder | WebElement,
+      actionOptions: ActionOptions = ACTION_OPTIONS): Promise<boolean> {
+    const action = async (): Promise<boolean> => {
+      const a = await this.getWebElement();
+      const b = (webElement['getWebElement']) ?
+        await (webElement as ElementFinder).getWebElement() :
+        webElement as WebElement;
+      const webElements = await this.getWebElement();
+      const driver = await webElements.getDriver();
+      return driver.executeScript<boolean>(
+        'return arguments[0] === arguments[1]', a, b);
+    };
+    return runAction(action, actionOptions, this._driver);
   }
+
+  private buildElementHelper(
+      driver: WebDriver|WebElement|Promise<WebDriver|WebElement>): ElementHelper {
+    let element: ElementHelper = (locator: Locator): ElementFinder => {
+      const getDriver = async(): Promise<WebElement> => {
+        const webElements = await this._getWebElements();
+        return webElements[0];
+      }
+      const getWebElements: GetWebElements = async (): Promise<WebElement[]> => {
+        const awaitedDriver = await getDriver();
+        if (isProtractorLocator(locator)) {
+          return locator.findElementsOverride(awaitedDriver, null);
+        } else {
+          return (await awaitedDriver).findElements(locator);
+        }
+      }
+      
+      return new ElementFinder(
+        getDriver(), locator, getWebElements);
+    }
+    element['all'] = (locator: Locator): ElementArrayFinder => {
+      return elementArrayFinderFactory(driver, locator);
+    }
+    return element;
+  }
+
+  element = this.buildElementHelper(this._driver);
 
   /**
-   * Finds the WebElement within this WebElement.
+   * Creates an ElementFinder from either the WebDriver or within a WebElement.
+   * @param driver The WebDriver or WebElement object.
    * @param locator The locator strategy.
-   * @return A promise to the WebElement within this WebElement.
+   * @param actionOptions Optional options for retries and functionHooks.
+   * @return The ElementFinder object.
    */
-  async findElement(locator: Locator): Promise<WebElement> {
-    const webElement = await this.getWebElement();
-    const elementFinder = elementFinderFactory(webElement, locator);
-    return elementFinder.getWebElement();
-  }
-
-  static async fromWebElement(driver: WebDriver|WebElement, locator: Locator
+  static async fromWebElement(
+      driver: WebDriver|WebElement|Promise<WebDriver|WebElement>,
+      locator: Locator, actionOptions: ActionOptions = ACTION_OPTIONS
       ): Promise<ElementFinder> {
-    if (driver instanceof WebElement) {
-      driver = await driver.getDriver();
-    }
-    const getWebElements = async (): Promise<WebElement[]> => {
-      if (isProtractorLocator(locator)) {
-        return locator.findElementsOverride(driver, null);
-      } else {
-        return await driver.findElements(locator);
+    const action = async(): Promise<ElementFinder> => {
+      const getWebElements = async (): Promise<WebElement[]> => {
+        const awaitedDriver = await driver;
+        if (isProtractorLocator(locator)) {
+          return locator.findElementsOverride(awaitedDriver, null);
+        } else {
+          return await awaitedDriver.findElements(locator);
+        }
       }
-    }
-    return new ElementFinder(driver, locator, getWebElements);
+      return new ElementFinder(driver, locator, getWebElements);
+    };
+    return runAction(action, actionOptions, driver);
   }
 
   /**
@@ -139,15 +180,6 @@ export class ElementFinder {
       return webElement.getCssValue(cssStyleProperty);
     };
     return runAction(action, actionOptions, this._driver);
-  }
-
-  /**
-   * Gets the parent driver.
-   * @return The WebDriver parent object.
-   */
-  async getDriver(): Promise<WebDriver> {
-    const webElement = await this.getWebElement();
-    return webElement.getDriver();
   }
 
   /**

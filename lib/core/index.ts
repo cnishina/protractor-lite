@@ -11,7 +11,7 @@ export { BrowserConfig } from './browser';
 export function build(config: BrowserConfig) {
   const browser = new Browser(config);
   const by = new By();
-  const element = buildElementHelper(browser);
+  const element = buildElementHelper(browser.driver);
   return {
     browser,
     by,

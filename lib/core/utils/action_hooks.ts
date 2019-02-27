@@ -1,46 +1,14 @@
 import * as loglevel from 'loglevel';
 import { WebDriver, WebElement } from 'selenium-webdriver';
+import { ActionOptions, Hook }  from './action_options';
 
 const log = loglevel.getLogger('protractor');
 
 /**
- * Function hooks for browser and local execution.
+ * Executes the command that are local.
+ * @param hook
  */
-export interface Hook {
-  /**
-   * A string representing a JavaScript function or a function to execute in
-   * the browser.
-   */
-  browser?: Array<Function|string>;
-  /**
-   * A function to execute locally in the node process.
-   */
-  local?: Array<Function>;
-}
-
-/**
- * Function hooks before and after running an action. If there are retries, the
- * before or after might be executed more than once. This will depend on the
- * implementation of the API.
- */
-export interface Hooks {
-  /**
-   * Should be executed before an action is executed.
-   */
-  before?: Hook;
-  /**
-   * Should be executed after an action is executed only after the action
-   * successfully runs.
-   */
-  after?: Hook;
-}
-
-export interface ActionOptions {
-  hooks?: Hooks;
-  retries?: number;
-}
-
-async function executeLocal(hook: Hook): Promise<void> {
+export async function executeLocal(hook: Hook): Promise<void> {
   if (hook.local) {
     for (let func of hook.local) {
       await func();
@@ -48,7 +16,12 @@ async function executeLocal(hook: Hook): Promise<void> {
   }
 }
 
-async function executeClientSide(driver: WebDriver,
+/**
+ * Executes the command on the browser.
+ * @param driver The WebDriver object.
+ * @param hook 
+ */
+export async function executeClientSide(driver: WebDriver,
     hook: Hook): Promise<void> {
   if (hook.browser) {
     for (let func of hook.browser) {
@@ -57,13 +30,13 @@ async function executeClientSide(driver: WebDriver,
   }
 }
 
-async function executeBefore(driver: WebDriver, hook: Hook
+export async function executeBefore(driver: WebDriver, hook: Hook
     ): Promise<void> {
   await executeLocal(hook);
   await executeClientSide(driver, hook);
 }
 
-async function executeAfter(driver: WebDriver, hook: Hook
+export async function executeAfter(driver: WebDriver, hook: Hook
     ): Promise<void> {
   await executeClientSide(driver, hook);
   await executeLocal(hook);
@@ -78,10 +51,14 @@ async function executeAfter(driver: WebDriver, hook: Hook
  */
 export async function runAction<T>(action: () => Promise<T>,
     actionOptions: ActionOptions,
-    webElementOrWebDriver: WebDriver|WebElement): Promise<T> {
+    webElementOrWebDriver: WebDriver|WebElement|Promise<WebDriver|WebElement>
+    ): Promise<T> {
   let driver: WebDriver;
-  if (webElementOrWebDriver instanceof WebElement) {
-    driver = await webElementOrWebDriver.getDriver();
+  const awaitedWebElementOrWebDriver = await webElementOrWebDriver;
+  if (awaitedWebElementOrWebDriver instanceof WebElement) {
+    driver = await awaitedWebElementOrWebDriver.getDriver();
+  } else {
+    driver = awaitedWebElementOrWebDriver;
   }
   const hooks = actionOptions.hooks;
   const retries = actionOptions.retries || 1;
@@ -129,14 +106,4 @@ export async function runAction<T>(action: () => Promise<T>,
     break;
   }
   return result;
-}
-
-/**
- * Interface for WebElement rectangles to find the position and dimensions.
- */
-export interface Rectangle {
-  width: number;
-  height: number;
-  x: number;
-  y: number;
 }

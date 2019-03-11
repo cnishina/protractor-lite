@@ -1,16 +1,16 @@
 import * as loglevel from 'loglevel';
 import { WebDriver, WebElement } from 'selenium-webdriver';
-import { ActionOptions, Hook }  from './action_options';
+import { TaskOptions, Task }  from './task_options';
 
 const log = loglevel.getLogger('protractor');
 
 /**
  * Executes the command that are local.
- * @param hook
+ * @param task
  */
-export async function executeLocal(hook: Hook): Promise<void> {
-  if (hook.local) {
-    for (let func of hook.local) {
+export async function executeLocal(task: Task): Promise<void> {
+  if (task.local) {
+    for (let func of task.local) {
       await func();
     }
   }
@@ -19,38 +19,38 @@ export async function executeLocal(hook: Hook): Promise<void> {
 /**
  * Executes the command on the browser.
  * @param driver The WebDriver object.
- * @param hook 
+ * @param task 
  */
 export async function executeClientSide(driver: WebDriver,
-    hook: Hook): Promise<void> {
-  if (hook.browser) {
-    for (let func of hook.browser) {
+    task: Task): Promise<void> {
+  if (task.browser) {
+    for (let func of task.browser) {
       await driver.executeScript(func);
     }
   }
 }
 
-export async function executeBefore(driver: WebDriver, hook: Hook
+export async function executeBefore(driver: WebDriver, task: Task
     ): Promise<void> {
-  await executeLocal(hook);
-  await executeClientSide(driver, hook);
+  await executeLocal(task);
+  await executeClientSide(driver, task);
 }
 
-export async function executeAfter(driver: WebDriver, hook: Hook
+export async function executeAfter(driver: WebDriver, task: Task
     ): Promise<void> {
-  await executeClientSide(driver, hook);
-  await executeLocal(hook);
+  await executeClientSide(driver, task);
+  await executeLocal(task);
 }
 
 /**
  * Runs an action with options.
  * @param action The action function to execute that returns a Promise T.
- * @param actionOptions The options for retries, before and after hooks.
+ * @param taskOptions The options for retries, before and after hooks.
  * @param webElementOrWebDriver The WebDriver or WebElement object.
  * @return A promise to the return type of the action.
  */
 export async function runAction<T>(action: () => Promise<T>,
-    actionOptions: ActionOptions,
+    taskOptions: TaskOptions,
     webElementOrWebDriver: WebDriver|WebElement|Promise<WebDriver|WebElement>
     ): Promise<T> {
   let driver: WebDriver;
@@ -60,8 +60,8 @@ export async function runAction<T>(action: () => Promise<T>,
   } else {
     driver = awaitedWebElementOrWebDriver;
   }
-  const hooks = actionOptions.hooks;
-  const retries = actionOptions.retries || 1;
+  const hooks = taskOptions.tasks;
+  const retries = taskOptions.retries || 1;
   let result = null;
   for (let attempt = 1; attempt <= retries; attempt++) {
     if (hooks && hooks.before) {

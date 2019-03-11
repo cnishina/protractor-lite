@@ -1,7 +1,7 @@
 /**
  * Function hooks for browser and local execution.
  */
-export interface Hook {
+export interface Task {
   /**
    * A string representing a JavaScript function or a function to execute in
    * the browser.
@@ -18,19 +18,19 @@ export interface Hook {
  * before or after might be executed more than once. This will depend on the
  * implementation of the API.
  */
-export interface Hooks {
+export interface TaskEvents {
   /**
    * Should be executed before an action is executed.
    */
-  before?: Hook;
+  before?: Task;
   /**
    * Should be executed after an action is executed only after the action
    * successfully runs.
    */
-  after?: Hook;
+  after?: Task;
 }
 
-export interface ActionOptions {
-  hooks?: Hooks;
+export interface TaskOptions {
+  tasks?: TaskEvents;
   retries?: number;
 }

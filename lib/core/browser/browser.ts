@@ -3,9 +3,9 @@ import { Executor, HttpClient } from 'selenium-webdriver/http';
 import { BrowserConfig } from './browser_config';
 import { Locator } from '../by';
 import { ElementFinder, elementFinderFactory } from '../element/element_finder';
-import { ActionOptions, Capabilities, Cookie, runAction } from '../utils';
+import { TaskOptions, Capabilities, Cookie, runAction } from '../utils';
 
-const ACTION_OPTIONS: ActionOptions = {
+const TASK_OPTIONS: TaskOptions = {
   retries: 1
 };
 
@@ -65,14 +65,14 @@ export class Browser {
   /**
    * Navigates to the url.
    * @param url
-   * @param actionOptions Optional options for retries and functionHooks.
+   * @param taskOptions Optional options for retries and functionHooks.
    */
   async get(url: string,
-      actionOptions: ActionOptions = ACTION_OPTIONS): Promise<void> {
+      taskOptions: TaskOptions = TASK_OPTIONS): Promise<void> {
     const action = async (): Promise<void> => {
       await this._driver.get(url);
     };
-    return runAction(action, actionOptions, this._driver);
+    return runAction(action, taskOptions, this._driver);
   }
 
   /**
@@ -115,15 +115,15 @@ export class Browser {
 
   /**
    * Get the current url string (includes the http protocol).
-   * @param actionOptions Optional options for retries and functionHooks.
+   * @param taskOptions Optional options for retries and functionHooks.
    * @return A promise to the current url.
    */
   async getCurrentUrl(
-      actionOptions: ActionOptions = ACTION_OPTIONS): Promise<string> {
+      taskOptions: TaskOptions = TASK_OPTIONS): Promise<string> {
     const action = async (): Promise<string> => {
       return await this._driver.getCurrentUrl();
     };
-    return runAction(action, actionOptions, this._driver);
+    return runAction(action, taskOptions, this._driver);
   }
 
   /**
@@ -138,15 +138,15 @@ export class Browser {
 
   /**
    * Gets the title value.
-   * @param actionOptions Optional options for retries and functionHooks.
+   * @param taskOptions Optional options for retries and functionHooks.
    * @return A promise to the title.
    */
   async getTitle(
-      actionOptions: ActionOptions = ACTION_OPTIONS): Promise<string> {
+      taskOptions: TaskOptions = TASK_OPTIONS): Promise<string> {
     const action = async (): Promise<string> => {
       return await this._driver.getTitle();
     };
-    return runAction(action, actionOptions, this._driver);
+    return runAction(action, taskOptions, this._driver);
   }
 
   /**

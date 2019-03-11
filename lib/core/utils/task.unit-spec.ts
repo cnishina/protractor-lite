@@ -1,19 +1,19 @@
 import { WebDriver } from 'selenium-webdriver';
-import { executeLocal, executeClientSide } from './action_hooks';
-import { Hook } from './action_options';
+import { executeLocal, executeClientSide } from './task';
+import { Task } from './task_options';
 
-describe('action_hooks', () => {
+describe('task', () => {
   describe('executeLocal', () => {
     it('should', async () => {
       let val = 0;
-      const hook: Hook = {
+      const task: Task = {
         local: [
           () => { val++ },
           () => { val++ }
         ]
       };
   
-      await executeLocal(hook);
+      await executeLocal(task);
       expect (val).toBe(2);
     });
   });
@@ -21,7 +21,7 @@ describe('action_hooks', () => {
   describe('executeClientSide', () => {
     it('should', async () => {
       let val = 0;
-      const hook: Hook = {
+      const task: Task = {
         browser: [
           () => { val++ },
           () => { val++ }
@@ -39,7 +39,7 @@ describe('action_hooks', () => {
         }
       }
       const driver = new MockDriver(null, null);
-      await executeClientSide(driver, hook);
+      await executeClientSide(driver, task);
       expect (val).toBe(2);
     });
   });

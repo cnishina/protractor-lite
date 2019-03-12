@@ -13,7 +13,7 @@ describe('task', () => {
         ]
       };
   
-      await executeLocal(task);
+      await executeLocal(task, {});
       expect (val).toBe(2);
     });
   });
@@ -39,7 +39,7 @@ describe('task', () => {
         }
       }
       const driver = new MockDriver(null, null);
-      await executeClientSide(driver, task);
+      await executeClientSide(task, driver);
       expect (val).toBe(2);
     });
   });

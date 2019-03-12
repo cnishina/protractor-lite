@@ -1,4 +1,4 @@
-import * as wdm from 'webdriver-manager-replacement';
+import * as wdm from 'webdriver-manager';
 import * as loglevel from 'loglevel';
 import { Capabilities, WebDriver } from 'selenium-webdriver';
 import { Driver as ChromeDriver, ServiceBuilder as ChromeServiceBuilder } from 'selenium-webdriver/chrome';

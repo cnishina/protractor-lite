@@ -3,8 +3,9 @@ import { Executor, HttpClient } from 'selenium-webdriver/http';
 import { BrowserConfig } from './browser_config';
 import { Locator } from '../by';
 import { ElementFinder, elementFinderFactory } from '../element/element_finder';
-import { TaskOptions, Capabilities, Cookie, runAction } from '../utils';
+import { Capabilities, Cookie, runAction, SharedResults, TaskOptions } from '../utils';
 
+const SHARED_RESULTS: SharedResults = { };
 const TASK_OPTIONS: TaskOptions = {
   retries: 1
 };
@@ -66,13 +67,15 @@ export class Browser {
    * Navigates to the url.
    * @param url
    * @param taskOptions Optional options for retries and functionHooks.
+   * @param sharedResults Optional shared results to help debugging.
    */
   async get(url: string,
-      taskOptions: TaskOptions = TASK_OPTIONS): Promise<void> {
+      taskOptions: TaskOptions = TASK_OPTIONS,
+      sharedResults: SharedResults = SHARED_RESULTS): Promise<void> {
     const action = async (): Promise<void> => {
       await this._driver.get(url);
     };
-    return runAction(action, taskOptions, this._driver);
+    return runAction(action, taskOptions, sharedResults, this._driver);
   }
 
   /**
@@ -102,7 +105,7 @@ export class Browser {
     return capabilities as Capabilities;
   }
 
-    /**
+  /**
    * Retrieves the cookie with the given name. Returns null if there is no such
    * cookie.
    * @param name The name of the cookie to retrieve.
@@ -116,14 +119,16 @@ export class Browser {
   /**
    * Get the current url string (includes the http protocol).
    * @param taskOptions Optional options for retries and functionHooks.
+   * @param sharedResults Optional shared results to help debugging.
    * @return A promise to the current url.
    */
   async getCurrentUrl(
-      taskOptions: TaskOptions = TASK_OPTIONS): Promise<string> {
+      taskOptions: TaskOptions = TASK_OPTIONS,
+      sharedResults: SharedResults = SHARED_RESULTS): Promise<string> {
     const action = async (): Promise<string> => {
       return await this._driver.getCurrentUrl();
     };
-    return runAction(action, taskOptions, this._driver);
+    return runAction(action, taskOptions, sharedResults, this._driver);
   }
 
   /**
@@ -139,14 +144,16 @@ export class Browser {
   /**
    * Gets the title value.
    * @param taskOptions Optional options for retries and functionHooks.
+   * @param sharedResults Optional shared results to help debugging.
    * @return A promise to the title.
    */
   async getTitle(
-      taskOptions: TaskOptions = TASK_OPTIONS): Promise<string> {
+      taskOptions: TaskOptions = TASK_OPTIONS,
+      sharedResults: SharedResults = SHARED_RESULTS): Promise<string> {
     const action = async (): Promise<string> => {
       return await this._driver.getTitle();
     };
-    return runAction(action, taskOptions, this._driver);
+    return runAction(action, taskOptions, sharedResults, this._driver);
   }
 
   /**

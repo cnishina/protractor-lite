@@ -3,7 +3,7 @@ import { GetWebElements } from './get_web_elements';
 import { ElementHelper } from './';
 import { elementArrayFinderFactory, ElementArrayFinder } from './all';
 import { isProtractorLocator, Locator } from '../by/locator';
-import { TaskOptions, Rectangle, runAction } from '../utils';
+import { Rectangle, runAction, SharedResults, TaskOptions } from '../utils';
 
 export function elementFinderFactory(
     driver: WebDriver|WebElement|Promise<WebDriver|WebElement>,
@@ -19,6 +19,7 @@ export function elementFinderFactory(
   return new ElementFinder(driver, locator, getWebElements);
 }
 
+const SHARED_RESULTS: SharedResults = {};
 const TASK_OPTIONS: TaskOptions = {
   retries: 1
 };
@@ -34,40 +35,44 @@ export class ElementFinder {
   /**
    * Clears the text from an input or textarea web element.
    * @param taskOptions Optional options for retries and functionHooks.
+   * @param sharedResults Optional shared results to help debugging.
    * @return A promise to this object.
    */
-  async clear(taskOptions: TaskOptions = TASK_OPTIONS
-      ): Promise<ElementFinder> {
+  async clear(taskOptions: TaskOptions = TASK_OPTIONS,
+      sharedResults: SharedResults = SHARED_RESULTS): Promise<ElementFinder> {
     const action = async (): Promise<void> => {
       const webElement = await this.getWebElement();
       await webElement.clear();
     };
-    await runAction(action, taskOptions, this._driver);
+    await runAction(action, taskOptions, sharedResults, this._driver);
     return this;
   }
 
   /**
    * Clicks on a web element.
    * @param taskOptions Optional options for retries and functionHooks.
+   * @param sharedResults Optional shared results to help debugging.
    * @return A promise to this object.
    */
-  async click(taskOptions: TaskOptions = TASK_OPTIONS
-      ): Promise<ElementFinder> {
+  async click(taskOptions: TaskOptions = TASK_OPTIONS,
+      sharedResults: SharedResults = SHARED_RESULTS): Promise<ElementFinder> {
     // Gets the first web element matching the locator and clicks on it.
     const action = async (): Promise<void> => {
       const webElement = await this.getWebElement();
       await webElement.click();
     };
-    await runAction(action, taskOptions, this._driver);
+    await runAction(action, taskOptions, sharedResults, this._driver);
     return this;
   }
 
   /**
    * The count of web elements.
    * @param taskOptions Optional options for retries and functionHooks.
+   * @param sharedResults Optional shared results to help debugging.
    * @return A promise of the number of elements matching the locator.
    */
-  count(taskOptions: TaskOptions = TASK_OPTIONS): Promise<number> {
+  count(taskOptions: TaskOptions = TASK_OPTIONS,
+      sharedResults: SharedResults = SHARED_RESULTS): Promise<number> {
     const action = async(): Promise<number> => {
       try {
         const webElements = await this._getWebElements();
@@ -76,17 +81,19 @@ export class ElementFinder {
         throw err;
       }
     };
-    return runAction(action, taskOptions, this._driver);
+    return runAction(action, taskOptions, sharedResults, this._driver);
   }
 
   /**
    * Compares an element to this one for equality.
    * @param webElement The element to compare to.
    * @param taskOptions Optional options for retries and functionHooks.
+   * @param sharedResults Optional shared results to help debugging.
    * @return A promise that will be resolved if they are equal.
    */
   async equals(webElement: ElementFinder | WebElement,
-      taskOptions: TaskOptions = TASK_OPTIONS): Promise<boolean> {
+      taskOptions: TaskOptions = TASK_OPTIONS,
+      sharedResults: SharedResults = SHARED_RESULTS): Promise<boolean> {
     const action = async (): Promise<boolean> => {
       const a = await this.getWebElement();
       const b = (webElement['getWebElement']) ?
@@ -97,7 +104,7 @@ export class ElementFinder {
       return driver.executeScript<boolean>(
         'return arguments[0] === arguments[1]', a, b);
     };
-    return runAction(action, taskOptions, this._driver);
+    return runAction(action, taskOptions, sharedResults, this._driver);
   }
 
   private buildElementHelper(
@@ -132,12 +139,13 @@ export class ElementFinder {
    * @param driver The WebDriver or WebElement object.
    * @param locator The locator strategy.
    * @param taskOptions Optional options for retries and functionHooks.
+   * @param sharedResults Optional shared results to help debugging.
    * @return The ElementFinder object.
    */
   static async fromWebElement(
       driver: WebDriver|WebElement|Promise<WebDriver|WebElement>,
-      locator: Locator, taskOptions: TaskOptions = TASK_OPTIONS
-      ): Promise<ElementFinder> {
+      locator: Locator, taskOptions: TaskOptions = TASK_OPTIONS,
+      sharedResults: SharedResults = SHARED_RESULTS): Promise<ElementFinder> {
     const action = async(): Promise<ElementFinder> => {
       const getWebElements = async (): Promise<WebElement[]> => {
         const awaitedDriver = await driver;
@@ -149,37 +157,41 @@ export class ElementFinder {
       }
       return new ElementFinder(driver, locator, getWebElements);
     };
-    return runAction(action, taskOptions, driver);
+    return runAction(action, taskOptions, sharedResults, driver);
   }
 
   /**
    * Gets the value of the provided attribute name.
    * @param attributeName The attribute key.
    * @param taskOptions Optional options for retries and functionHooks.
+   * @param sharedResults Optional shared results to help debugging.
    * @return A promise to the attribute value.
    */
   getAttribute(attributeName: string,
-      taskOptions: TaskOptions = TASK_OPTIONS): Promise<string> {
+      taskOptions: TaskOptions = TASK_OPTIONS,
+      sharedResults: SharedResults = SHARED_RESULTS): Promise<string> {
     const action = async (): Promise<string> => {
       const webElement = await this.getWebElement();
       return webElement.getAttribute(attributeName);
     };
-    return runAction(action, taskOptions, this._driver);
+    return runAction(action, taskOptions, sharedResults, this._driver);
   }
 
   /**
    * Retrieves the value of a computed style property for this instance.
    * @param cssStyleProperty The name of the CSS style property to look up.
    * @param taskOptions Optional options for retries and functionHooks.
+   * @param sharedResults Optional shared results to help debugging.
    * @return A promise that will be resolved with the requested CSS value.
    */
   getCssValue(cssStyleProperty: string,
-      taskOptions: TaskOptions = TASK_OPTIONS): Promise<string> {
+      taskOptions: TaskOptions = TASK_OPTIONS,
+      sharedResults: SharedResults = SHARED_RESULTS): Promise<string> {
     const action = async (): Promise<string> => {
       const webElement = await this.getWebElement();
       return webElement.getCssValue(cssStyleProperty);
     };
-    return runAction(action, taskOptions, this._driver);
+    return runAction(action, taskOptions, sharedResults, this._driver);
   }
 
   /**
@@ -191,14 +203,16 @@ export class ElementFinder {
    * Returns an object describing an element's location, in pixels relative to
    * the document element, and the element's size in pixels.
    * @param taskOptions Optional options for retries and functionHooks.
+   * @param sharedResults Optional shared results to help debugging.
    * @return A rectangle.
    */
-  getRect(taskOptions: TaskOptions = TASK_OPTIONS): Promise<Rectangle> {
+  getRect(taskOptions: TaskOptions = TASK_OPTIONS,
+      sharedResults: SharedResults = SHARED_RESULTS): Promise<Rectangle> {
     const action = async (): Promise<Rectangle> => {
       const webElement = await this.getWebElement();
       return (webElement as any).getRect();
     }
-    return runAction(action, taskOptions, this._driver);
+    return runAction(action, taskOptions, sharedResults, this._driver);
   }
 
   /**
@@ -209,28 +223,31 @@ export class ElementFinder {
   /**
    * Gets the tag name of the web element.
    * @param taskOptions Optional options for retries and functionHooks.
+   * @param sharedResults Optional shared results to help debugging.
    * @return A promise to the tag name.
    */
-  getTagName(taskOptions: TaskOptions = TASK_OPTIONS): Promise<string> {
+  getTagName(taskOptions: TaskOptions = TASK_OPTIONS,
+      sharedResults: SharedResults = SHARED_RESULTS): Promise<string> {
     const action = async (): Promise<string> => {
       const webElement = await this.getWebElement();
       return webElement.getTagName();
     };
-    return runAction(action, taskOptions, this._driver);
+    return runAction(action, taskOptions, sharedResults, this._driver);
   }
 
   /**
    * Gets the text contents from the html tag.
    * @param taskOptions Optional options for retries and functionHooks.
+   * @param sharedResults Optional shared results to help debugging.
    * @return A promise to the text.
    */
-  getText(taskOptions: TaskOptions = TASK_OPTIONS
-      ): Promise<string> {
+  getText(taskOptions: TaskOptions = TASK_OPTIONS,
+      sharedResults: SharedResults = SHARED_RESULTS): Promise<string> {
     const action = async (): Promise<string> => {
       const webElement = await this.getWebElement();
       return webElement.getText();
     };
-    return runAction(action, taskOptions, this._driver);
+    return runAction(action, taskOptions, sharedResults, this._driver);
   }
 
   /**
@@ -246,15 +263,16 @@ export class ElementFinder {
   /**
    * Whether the element is displayed.
    * @param taskOptions Optional options for retries and functionHooks.
+   * @param sharedResults Optional shared results to help debugging.
    * @return A promise if the web element is displayed.
    */
-  isDisplayed(taskOptions: TaskOptions = TASK_OPTIONS
-      ): Promise<boolean> {
+  isDisplayed(taskOptions: TaskOptions = TASK_OPTIONS,
+      sharedResults: SharedResults = SHARED_RESULTS): Promise<boolean> {
     const action = async (): Promise<boolean> => {
       const webElement = await this.getWebElement();
       return webElement.isDisplayed();
     };
-    return runAction(action, taskOptions, this._driver);
+    return runAction(action, taskOptions, sharedResults, this._driver);
   }
 
   /**
@@ -265,15 +283,16 @@ export class ElementFinder {
   /**
    * Whether the web element is enabled.
    * @param taskOptions Optional options for retries and functionHooks.
+   * @param sharedResults Optional shared results to help debugging.
    * @return A promise if the web element is enabled.
    */
-  isEnabled(taskOptions: TaskOptions = TASK_OPTIONS
-      ): Promise<boolean> {
+  isEnabled(taskOptions: TaskOptions = TASK_OPTIONS,
+      sharedResults: SharedResults = SHARED_RESULTS): Promise<boolean> {
     const action = async (): Promise<boolean> => {
       const webElement = await this.getWebElement();
       return webElement.isEnabled();
     };
-    return runAction(action, taskOptions, this._driver);
+    return runAction(action, taskOptions, sharedResults, this._driver);
   }
 
   /**
@@ -281,10 +300,10 @@ export class ElementFinder {
    * it get the ElementFinder for the locatorOrElement
    * @param locator Opt locator to find a WebElement within this WebElement
    * @param taskOptions Optional options for retries and functionHooks.
+   * @param sharedResults Optional shared results to help debugging.
    */
-  async isPresent(locator?: Locator,
-    taskOptions: TaskOptions = TASK_OPTIONS
-      ): Promise<boolean> {
+  async isPresent(locator?: Locator, taskOptions: TaskOptions = TASK_OPTIONS,
+      sharedResults: SharedResults = SHARED_RESULTS): Promise<boolean> {
     const action = async (): Promise<boolean> => {
       if (locator) {
         // Get the element if it is within this element and check the count.
@@ -296,21 +315,22 @@ export class ElementFinder {
         return await this.count() >= 1;
       }
     };
-    return runAction(action, taskOptions, this._driver);
+    return runAction(action, taskOptions, sharedResults, this._driver);
   }
 
   /**
    * Whether the element is currently selected.
    * @param taskOptions Optional options for retries and functionHooks.
+   * @param sharedResults Optional shared results to help debugging.
    * @return A promise if the web element is selected.
    */
-  isSelected(taskOptions: TaskOptions = TASK_OPTIONS
-      ): Promise<boolean> {
+  isSelected(taskOptions: TaskOptions = TASK_OPTIONS,
+      sharedResults: SharedResults = SHARED_RESULTS): Promise<boolean> {
     const action = async (): Promise<boolean> => {
       const webElement = await this.getWebElement();
       return webElement.isSelected();
     };
-    return runAction(action, taskOptions, this._driver);
+    return runAction(action, taskOptions, sharedResults, this._driver);
   }
 
   /**
@@ -325,30 +345,32 @@ export class ElementFinder {
    * Send keys to the input field.
    * @param keys
    * @param taskOptions Optional options for retries and functionHooks.
+   * @param sharedResults Optional shared results to help debugging.
    * @return A promise to this object.
    */
-  async sendKeys(keys: string|number,
-      taskOptions: TaskOptions = TASK_OPTIONS): Promise<ElementFinder> {
+  async sendKeys(keys: string|number, taskOptions: TaskOptions = TASK_OPTIONS,
+      sharedResults: SharedResults = SHARED_RESULTS): Promise<ElementFinder> {
     const action = async (): Promise<void> => {
       const webElement = await this.getWebElement();
       return webElement.sendKeys(keys);
     };
-    await runAction(action, taskOptions, this._driver);
+    await runAction(action, taskOptions, sharedResults, this._driver);
     return this;
   }
 
   /**
    * Submits the form containing this element.
    * @param taskOptions Optional options for retries and functionHooks.
+   * @param sharedResults Optional shared results to help debugging.
    * @return A promise to this object.
    */
-  async submit(taskOptions: TaskOptions = TASK_OPTIONS
-      ): Promise<ElementFinder> {
+  async submit(taskOptions: TaskOptions = TASK_OPTIONS,
+      sharedResults: SharedResults = SHARED_RESULTS): Promise<ElementFinder> {
     const action = async (): Promise<void> => {
       const webElement = await this.getWebElement();
       return webElement.submit();
     }
-    await runAction(action, taskOptions, this._driver);
+    await runAction(action, taskOptions, sharedResults, this._driver);
     return this;
   }
 }

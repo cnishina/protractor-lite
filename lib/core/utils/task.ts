@@ -1,5 +1,6 @@
 import * as loglevel from 'loglevel';
 import { WebDriver, WebElement } from 'selenium-webdriver';
+import { SharedResults } from './shared_results';
 import { TaskOptions, Task }  from './task_options';
 
 const log = loglevel.getLogger('protractor');
@@ -8,10 +9,11 @@ const log = loglevel.getLogger('protractor');
  * Executes the command that are local.
  * @param task
  */
-export async function executeLocal(task: Task): Promise<void> {
+export async function executeLocal(task: Task, sharedResults: SharedResults,
+    driver?: WebDriver): Promise<void> {
   if (task.local) {
     for (let func of task.local) {
-      await func();
+      await func(sharedResults, driver);
     }
   }
 }
@@ -21,8 +23,8 @@ export async function executeLocal(task: Task): Promise<void> {
  * @param driver The WebDriver object.
  * @param task 
  */
-export async function executeClientSide(driver: WebDriver,
-    task: Task): Promise<void> {
+export async function executeClientSide(task: Task,
+    driver: WebDriver): Promise<void> {
   if (task.browser) {
     for (let func of task.browser) {
       await driver.executeScript(func);
@@ -30,16 +32,16 @@ export async function executeClientSide(driver: WebDriver,
   }
 }
 
-export async function executeBefore(driver: WebDriver, task: Task
-    ): Promise<void> {
-  await executeLocal(task);
-  await executeClientSide(driver, task);
+export async function executeBefore(task: Task, sharedResults: SharedResults,
+    driver: WebDriver): Promise<void> {
+  await executeLocal(task, sharedResults, driver);
+  await executeClientSide(task, driver);
 }
 
-export async function executeAfter(driver: WebDriver, task: Task
-    ): Promise<void> {
-  await executeClientSide(driver, task);
-  await executeLocal(task);
+export async function executeAfter(task: Task, sharedResults: SharedResults,
+    driver: WebDriver): Promise<void> {
+  await executeClientSide(task, driver);
+  await executeLocal(task, sharedResults, driver);
 }
 
 /**
@@ -50,7 +52,7 @@ export async function executeAfter(driver: WebDriver, task: Task
  * @return A promise to the return type of the action.
  */
 export async function runAction<T>(action: () => Promise<T>,
-    taskOptions: TaskOptions,
+    taskOptions: TaskOptions, sharedResults: SharedResults,
     webElementOrWebDriver: WebDriver|WebElement|Promise<WebDriver|WebElement>
     ): Promise<T> {
   let driver: WebDriver;
@@ -60,13 +62,13 @@ export async function runAction<T>(action: () => Promise<T>,
   } else {
     driver = awaitedWebElementOrWebDriver;
   }
-  const hooks = taskOptions.tasks;
+  const tasks = taskOptions.tasks;
   const retries = taskOptions.retries || 1;
   let result = null;
   for (let attempt = 1; attempt <= retries; attempt++) {
-    if (hooks && hooks.before) {
+    if (tasks && tasks.before) {
       try {
-        await executeBefore(driver, hooks.before);
+        await executeBefore(tasks.before, sharedResults, driver);
       } catch (err) {
         if (attempt !== retries) {
           log.warn('Attempt ${attempt} failed before action.', err);
@@ -89,9 +91,9 @@ export async function runAction<T>(action: () => Promise<T>,
       continue;
     }
 
-    if (hooks && hooks.after) {
+    if (tasks && tasks.after) {
       try {
-        await executeAfter(driver, hooks.after);
+        await executeAfter(tasks.after, sharedResults, driver);
       } catch (err) {
         if (attempt !== retries) {
           log.warn('Attempt ${attempt} failed after action.', err);

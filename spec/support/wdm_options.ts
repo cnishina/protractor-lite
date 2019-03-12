@@ -1,4 +1,4 @@
-import * as wdm from 'webdriver-manager-replacement';
+import * as wdm from 'webdriver-manager';
 
 export const options: wdm.Options = {
   browserDrivers: [{name: 'chromedriver'}],

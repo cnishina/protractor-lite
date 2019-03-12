@@ -3,7 +3,8 @@ import { Executor, HttpClient } from 'selenium-webdriver/http';
 import { BrowserConfig } from './browser_config';
 import { Locator } from '../by';
 import { ElementFinder, elementFinderFactory } from '../element/element_finder';
-import { Capabilities, Cookie, runAction, SharedResults, TaskOptions } from '../utils';
+import * as taskHelpers from '../utils/task_helpers';
+import { Capabilities, Cookie, runAction, SharedResults, sharedResultsInit, TaskOptions, taskOptionsInit } from '../utils';
 
 const SHARED_RESULTS: SharedResults = { };
 const TASK_OPTIONS: TaskOptions = {
@@ -24,9 +25,22 @@ export class Browser {
   /**
    * Adds a cookie.
    * @param cookie The cookie interface.
+   * @param taskOptions Optional options for retries and functionHooks.
+   * @param sharedResults Optional shared results to help debugging.
    */
-  async addCookie(cookie: Cookie): Promise<void> {
-    this._driver.manage().addCookie(cookie);
+  async addCookie(cookie: Cookie, taskOptions: TaskOptions = TASK_OPTIONS,
+      sharedResults: SharedResults = SHARED_RESULTS): Promise<void> {
+    sharedResults = sharedResultsInit(sharedResults);
+    taskOptions = taskOptionsInit(taskOptions);
+    if (taskOptions.useDefaults) {
+      taskOptions.tasks.before.local.push(taskHelpers.beforeCookies);
+      taskOptions.tasks.after.local.unshift(taskHelpers.afterCookies);
+    }
+
+    const action = async () => {
+      await this._driver.manage().addCookie(cookie);
+    };
+    await runAction(action, taskOptions, sharedResults, this._driver);
   }
 
   /**
@@ -40,9 +54,22 @@ export class Browser {
    * Deletes the cookie with the given name. This command is a no-op if there is
    * no cookie with the given name visible to the current page.
    * @param name The name of the cookie to delete.
+   * @param taskOptions Optional options for retries and functionHooks.
+   * @param sharedResults Optional shared results to help debugging.
    */
-  async deleteCookie(name: string) {
-    await this._driver.manage().deleteCookie(name);
+  async deleteCookie(name: string, taskOptions: TaskOptions = TASK_OPTIONS,
+      sharedResults: SharedResults = SHARED_RESULTS): Promise<void> {
+    sharedResults = sharedResultsInit(sharedResults);
+    taskOptions = taskOptionsInit(taskOptions);
+    if (taskOptions.useDefaults) {
+      taskOptions.tasks.before.local.push(taskHelpers.beforeCookies);
+      taskOptions.tasks.after.local.unshift(taskHelpers.afterCookies);
+    }
+
+    const action = async () => {
+      await this._driver.manage().deleteCookie(name);
+    };
+    await runAction(action, taskOptions, sharedResults, this._driver);
   }
 
   /**
@@ -69,22 +96,48 @@ export class Browser {
    * @param taskOptions Optional options for retries and functionHooks.
    * @param sharedResults Optional shared results to help debugging.
    */
-  async get(url: string,
-      taskOptions: TaskOptions = TASK_OPTIONS,
+  async get(url: string, taskOptions: TaskOptions = TASK_OPTIONS,
       sharedResults: SharedResults = SHARED_RESULTS): Promise<void> {
+    sharedResults = sharedResultsInit(sharedResults);
+    taskOptions = taskOptionsInit(taskOptions);
+
+    if (taskOptions.useDefaults) {
+      taskOptions.tasks.before.local.push(taskHelpers.beforeUrl);
+
+      // order: check the document readyState then verify the page source
+      taskOptions.tasks.after.local.unshift(taskHelpers.afterUrl);
+      taskOptions.tasks.after.local.unshift(taskHelpers.afterPageSource);
+      taskOptions.tasks.after.local.unshift(
+          taskHelpers.afterDocumentReadyState);
+    }
+
     const action = async (): Promise<void> => {
+      sharedResults.url = url;
       await this._driver.get(url);
     };
-    return runAction(action, taskOptions, sharedResults, this._driver);
+    await runAction(action, taskOptions, sharedResults, this._driver);
   }
 
   /**
    * Retrieves all cookies visible to the current page.
+   * @param taskOptions Optional options for retries and functionHooks.
+   * @param sharedResults Optional shared results to help debugging.
    * @return A promise with the cookies visible to the current session.
    */
-  async getAllCookies(): Promise<Cookie[]|null> {
-    const cookies = await this._driver.manage().getCookies() as Cookie[];
-    return cookies;
+  async getAllCookies(taskOptions: TaskOptions = TASK_OPTIONS,
+      sharedResults: SharedResults = SHARED_RESULTS): Promise<Cookie[]|null> {
+    sharedResults = sharedResultsInit(sharedResults);
+    taskOptions = taskOptionsInit(taskOptions);
+    if (taskOptions.useDefaults) {
+      taskOptions.tasks.before.local.push(taskHelpers.beforeCookies);
+      taskOptions.tasks.after.local.unshift(taskHelpers.afterCookies);
+    }
+
+    const action = async () => {
+      const cookies = await this._driver.manage().getCookies() as Cookie[];
+      return cookies;
+    };
+    return runAction(action, taskOptions, sharedResults, this._driver);
   }
 
   /**
@@ -103,17 +156,6 @@ export class Browser {
   async getCapabilities(): Promise<Object> {
     const capabilities = await this._driver.getCapabilities();
     return capabilities as Capabilities;
-  }
-
-  /**
-   * Retrieves the cookie with the given name. Returns null if there is no such
-   * cookie.
-   * @param name The name of the cookie to retrieve.
-   * @return A promise to the cookie or null.
-   */
-  async getCookie(name: string): Promise<Cookie|null> {
-    const cookie = await this._driver.manage().getCookie(name) as Cookie;
-    return cookie;
   }
 
   /**
@@ -187,23 +229,75 @@ export class Browser {
   /**
    * Moves backwards in the browser history.
    */
-  async navigateBack(): Promise<void> {
-    await this._driver.navigate().back();
+  async navigateBack(taskOptions: TaskOptions = TASK_OPTIONS,
+      sharedResults: SharedResults = SHARED_RESULTS): Promise<void> {
+    sharedResults = sharedResultsInit(sharedResults);
+    taskOptions = taskOptionsInit(taskOptions);
+
+    if (taskOptions.useDefaults) {
+      taskOptions.tasks.before.local.push(taskHelpers.beforeUrl);
+
+      // order: check the document readyState then verify the page source
+      taskOptions.tasks.after.local.unshift(taskHelpers.afterUrl);
+      taskOptions.tasks.after.local.unshift(taskHelpers.afterPageSource);
+      taskOptions.tasks.after.local.unshift(
+          taskHelpers.afterDocumentReadyState);
+    }
+
+    const action = async () => {
+      await this._driver.navigate().back();
+    };
+    await runAction(action, taskOptions, sharedResults, this._driver);
   }
 
   /**
    * Moves forwards in the browser history.
    */
-  async navigateForward(): Promise<void> {
-    await this._driver.navigate().forward();
+  async navigateForward(taskOptions: TaskOptions = TASK_OPTIONS,
+      sharedResults: SharedResults = SHARED_RESULTS): Promise<void> {
+    sharedResults = sharedResultsInit(sharedResults);
+    taskOptions = taskOptionsInit(taskOptions);
+
+    if (taskOptions.useDefaults) {
+      taskOptions.tasks.before.local.push(taskHelpers.beforeUrl);
+
+      // order: check the document readyState then verify the page source
+      taskOptions.tasks.after.local.unshift(taskHelpers.afterUrl);
+      taskOptions.tasks.after.local.unshift(taskHelpers.afterPageSource);
+      taskOptions.tasks.after.local.unshift(
+          taskHelpers.afterDocumentReadyState);
+    }
+
+    const action = async () => {
+      await this._driver.navigate().forward();
+    };
+    await runAction(action, taskOptions, sharedResults, this._driver);
   }
 
   /**
    * Navigates to a new URL.
    * @param url The URL to navigate to.
    */
-  async navigateTo(url: string): Promise<void> {
-    await this._driver.navigate().to(url);
+  async navigateTo(url: string, taskOptions: TaskOptions = TASK_OPTIONS,
+      sharedResults: SharedResults = SHARED_RESULTS): Promise<void> {
+    sharedResults = sharedResultsInit(sharedResults);
+    taskOptions = taskOptionsInit(taskOptions);
+
+    if (taskOptions.useDefaults) {
+      taskOptions.tasks.before.local.push(taskHelpers.beforeUrl);
+
+      // order: check the document readyState then verify the page source
+      taskOptions.tasks.after.local.unshift(taskHelpers.afterUrl);
+      taskOptions.tasks.after.local.unshift(taskHelpers.afterPageSource);
+      taskOptions.tasks.after.local.unshift(
+          taskHelpers.afterDocumentReadyState);
+    }
+
+    const action = async () => {
+      sharedResults.url = url;
+      await this._driver.navigate().to(url);
+    };
+    await runAction(action, taskOptions, sharedResults, this._driver);
   }
 
   /**

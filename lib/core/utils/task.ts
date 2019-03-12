@@ -65,7 +65,10 @@ export async function runAction<T>(action: () => Promise<T>,
   const tasks = taskOptions.tasks;
   const retries = taskOptions.retries || 1;
   let result = null;
+
+  sharedResults.beforeUtcTimestamp = new Date().getTime();
   for (let attempt = 1; attempt <= retries; attempt++) {
+    sharedResults.retry = attempt;
     if (tasks && tasks.before) {
       try {
         await executeBefore(tasks.before, sharedResults, driver);
@@ -73,8 +76,15 @@ export async function runAction<T>(action: () => Promise<T>,
         if (attempt !== retries) {
           log.warn('Attempt ${attempt} failed before action.', err);
         } else {
+          sharedResults.afterUtcTimestamp = new Date().getTime();
+          sharedResults.duration =
+            sharedResults.afterUtcTimestamp - sharedResults.beforeUtcTimestamp;
           log.error('Failed to execute the before action.', err);
-          throw err;
+          if (taskOptions.validate) {
+            // Only throw errors if we are validating. If we are not, we should
+            // just log the error.
+            throw err;
+          }
         }
         continue;
       }
@@ -85,8 +95,15 @@ export async function runAction<T>(action: () => Promise<T>,
       if (attempt !== retries) {
         log.warn('Attempt ${attempt} failed to do action.', err);
       } else {
+        sharedResults.afterUtcTimestamp = new Date().getTime();
+        sharedResults.duration =
+          sharedResults.afterUtcTimestamp - sharedResults.beforeUtcTimestamp;
         log.error('Failed to do the action.', err);
-        throw err;
+        if (taskOptions.validate) {
+          // Only throw errors if we are validating. If we are not, we should
+          // just log the error.
+          throw err;
+        }
       }
       continue;
     }
@@ -98,8 +115,15 @@ export async function runAction<T>(action: () => Promise<T>,
         if (attempt !== retries) {
           log.warn('Attempt ${attempt} failed after action.', err);
         } else {
+          sharedResults.afterUtcTimestamp = new Date().getTime();
+          sharedResults.duration =
+            sharedResults.afterUtcTimestamp - sharedResults.beforeUtcTimestamp;
           log.error('Failed to execute the after action.', err);
-          throw err;
+          if (taskOptions.validate) {
+            // Only throw errors if we are validating. If we are not, we should
+            // just log the error.
+            throw err;
+          }
         }
         continue;
       }

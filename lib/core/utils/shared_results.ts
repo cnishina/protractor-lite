@@ -1,5 +1,12 @@
 import { Cookie } from './cookie';
 
+export function sharedResultsInit(sharedResults: SharedResults): SharedResults {
+  if (!sharedResults) {
+    sharedResults = {};
+  }
+  return sharedResults;
+}
+
 /**
  * Shared results between tasks
  */

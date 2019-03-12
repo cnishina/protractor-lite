@@ -7,6 +7,12 @@ const log = loglevel.getLogger('protractor');
 const TIMEOUT = 5000;
 const POLL_TIMEOUT = 500;
 
+export async function afterActiveWebElementId(sharedResults: SharedResults,
+    driver: WebDriver): Promise<void> {
+  sharedResults.afterActiveWebElementId = await driver.switchTo()
+      .activeElement().getId();
+}
+
 export async function afterCookies(sharedResults: SharedResults,
     driver: WebDriver): Promise<void> {
   sharedResults.afterCookies = await driver.manage().getCookies();
@@ -50,6 +56,17 @@ export async function afterUrl(sharedResults: SharedResults,
   sharedResults.afterUrl = await driver.getCurrentUrl();
 }
 
+export async function afterWindowHandle(sharedResults: SharedResults,
+    driver: WebDriver): Promise<void> {
+  sharedResults.afterWindowHandle = await driver.getWindowHandle();
+}
+
+export async function beforeActiveWebElementId(sharedResults: SharedResults,
+    driver: WebDriver): Promise<void> {
+  sharedResults.beforeActiveWebElementId = await driver.switchTo()
+      .activeElement().getId();
+}
+
 export async function beforeCookies(sharedResults: SharedResults,
     driver: WebDriver): Promise<void> {
   sharedResults.beforeCookies = await driver.manage().getCookies();
@@ -58,4 +75,9 @@ export async function beforeCookies(sharedResults: SharedResults,
 export async function beforeUrl(sharedResults: SharedResults,
     driver: WebDriver): Promise<void> {
   sharedResults.beforeUrl = await driver.getCurrentUrl();
+}
+
+export async function beforeWindowHandle(sharedResults: SharedResults,
+    driver: WebDriver): Promise<void> {
+  sharedResults.beforeWindowHandle = await driver.getWindowHandle();
 }

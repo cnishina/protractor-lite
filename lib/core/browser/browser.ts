@@ -6,18 +6,14 @@ import { ElementFinder, elementFinderFactory } from '../element/element_finder';
 import * as taskHelpers from '../utils/task_helpers';
 import { Capabilities, Cookie, runAction, SharedResults, sharedResultsInit, TaskOptions, taskOptionsInit } from '../utils';
 
-const SHARED_RESULTS: SharedResults = { };
-const TASK_OPTIONS: TaskOptions = {
-  retries: 1,
-  validate: true,
-  useDefaults: true
-};
 
 export class Browser {
-  private _driver: WebDriver;
-  private _session: Session;
+  protected _driver: WebDriver;
+  protected _session: Session;
+  protected _taskOptions: TaskOptions;
+  protected _sharedResults: SharedResults;
 
-  constructor(private _browserConfig?: BrowserConfig) {
+  constructor(protected _browserConfig?: BrowserConfig) {
     const httpClient = new HttpClient(this._browserConfig.seleniumAddress);
     const executor = new Executor(httpClient);
     this._session = new Session(this._browserConfig.seleniumSessionId, null);
@@ -27,58 +23,56 @@ export class Browser {
   /**
    * Adds a cookie.
    * @param cookie The cookie interface.
-   * @param taskOptions Optional options for retries and functionHooks.
-   * @param sharedResults Optional shared results to help debugging.
    * @return A promise when completed.
    */
-  async addCookie(cookie: Cookie, taskOptions: TaskOptions = TASK_OPTIONS,
-      sharedResults: SharedResults = SHARED_RESULTS): Promise<void> {
-    sharedResults = sharedResultsInit(sharedResults);
-    taskOptions = taskOptionsInit(taskOptions);
-    if (taskOptions.useDefaults) {
-      taskOptions.tasks.before.local.push(taskHelpers.beforeCookies);
-      taskOptions.tasks.after.local.unshift(taskHelpers.afterCookies);
+  async addCookie(cookie: Cookie): Promise<void> {
+    this._sharedResults = sharedResultsInit();
+    this._taskOptions = taskOptionsInit();
+    if (this._taskOptions.useDefaults) {
+      this._taskOptions.tasks.before.local.push(taskHelpers.beforeCookies);
+      this._taskOptions.tasks.after.local.push(taskHelpers.afterCookies);
     }
 
     const action = async () => {
       await this._driver.manage().addCookie(cookie);
     };
-    await runAction(action, taskOptions, sharedResults, this._driver);
+    await runAction(action, this._taskOptions,
+      this._sharedResults, this._driver);
   }
 
   /**
    * Closes the current window.
    * @return A promise when completed.
    */
-  async close(taskOptions: TaskOptions = TASK_OPTIONS,
-      sharedResults: SharedResults = SHARED_RESULTS): Promise<void> {
+  async close(): Promise<void> {
+    this._sharedResults = sharedResultsInit();
+    this._taskOptions = taskOptionsInit();
     const action = async () => {
       await this._driver.close();
     };
-    runAction(action, taskOptions, sharedResults, this._driver);
+    await runAction(action, this._taskOptions,
+      this._sharedResults, this._driver);
   }
 
   /**
    * Deletes the cookie with the given name. This command is a no-op if there is
    * no cookie with the given name visible to the current page.
    * @param name The name of the cookie to delete.
-   * @param taskOptions Optional options for retries and functionHooks.
-   * @param sharedResults Optional shared results to help debugging.
    * @return A promise when completed.
    */
-  async deleteCookie(name: string, taskOptions: TaskOptions = TASK_OPTIONS,
-      sharedResults: SharedResults = SHARED_RESULTS): Promise<void> {
-    sharedResults = sharedResultsInit(sharedResults);
-    taskOptions = taskOptionsInit(taskOptions);
-    if (taskOptions.useDefaults) {
-      taskOptions.tasks.before.local.push(taskHelpers.beforeCookies);
-      taskOptions.tasks.after.local.unshift(taskHelpers.afterCookies);
+  async deleteCookie(name: string): Promise<void> {
+    this._sharedResults = sharedResultsInit();
+    this._taskOptions = taskOptionsInit();
+    if (this._taskOptions.useDefaults) {
+      this._taskOptions.tasks.before.local.push(taskHelpers.beforeCookies);
+      this._taskOptions.tasks.after.local.push(taskHelpers.afterCookies);
     }
 
     const action = async () => {
       await this._driver.manage().deleteCookie(name);
     };
-    await runAction(action, taskOptions, sharedResults, this._driver);
+    await runAction(action, this._taskOptions,
+      this._sharedResults, this._driver);
   }
 
   /**
@@ -96,142 +90,147 @@ export class Browser {
    * @return A promise to the value T.
    */
   async execute<T>(func: string|Function, ...args: any[]): Promise<T> {
-    return await this._driver.executeScript(func, args) as T;
+    this._sharedResults = sharedResultsInit();
+    this._taskOptions = taskOptionsInit();
+    const action = async () => {
+      return await this._driver.executeScript(func, args) as T;
+    };
+    return runAction(action, this._taskOptions,
+      this._sharedResults, this._driver);
   }
 
   /**
    * Navigates to the url.
    * @param url
-   * @param taskOptions Optional options for retries and functionHooks.
-   * @param sharedResults Optional shared results to help debugging.
    * @return A promise when completed.
    */
-  async get(url: string, taskOptions: TaskOptions = TASK_OPTIONS,
-      sharedResults: SharedResults = SHARED_RESULTS): Promise<void> {
-    sharedResults = sharedResultsInit(sharedResults);
-    taskOptions = taskOptionsInit(taskOptions);
-
-    if (taskOptions.useDefaults) {
-      taskOptions.tasks.before.local.push(taskHelpers.beforeUrl);
-
-      // order: check the document readyState then verify the page source
-      taskOptions.tasks.after.local.unshift(taskHelpers.afterUrl);
-      taskOptions.tasks.after.local.unshift(taskHelpers.afterPageSource);
-      taskOptions.tasks.after.local.unshift(
-          taskHelpers.afterDocumentReadyState);
+  async get(url: string): Promise<void> {
+    this._sharedResults = sharedResultsInit();
+    this._taskOptions = taskOptionsInit();
+    
+    if (this._taskOptions.useDefaults) {
+      let tasks = this._taskOptions.tasks;
+      tasks.before.local.push(taskHelpers.beforeUrl);
+      tasks.after.local.push(taskHelpers.afterUrl);
+      tasks.after.local.push(taskHelpers.afterPageSource);
+      tasks.after.local.push(taskHelpers.afterDocumentReadyState);
     }
 
     const action = async (): Promise<void> => {
-      sharedResults.url = url;
+      this._sharedResults.url = url;
       await this._driver.get(url);
     };
-    await runAction(action, taskOptions, sharedResults, this._driver);
+    await runAction(action, this._taskOptions,
+      this._sharedResults, this._driver);
   }
 
   /**
    * Retrieves all cookies visible to the current page.
-   * @param taskOptions Optional options for retries and functionHooks.
-   * @param sharedResults Optional shared results to help debugging.
    * @return A promise with the cookies visible to the current session.
    */
-  async getAllCookies(taskOptions: TaskOptions = TASK_OPTIONS,
-      sharedResults: SharedResults = SHARED_RESULTS): Promise<Cookie[]|null> {
+  async getAllCookies(): Promise<Cookie[]|null> {
+    this._sharedResults = sharedResultsInit();
+    this._taskOptions = taskOptionsInit();
     const action = async () => {
       const cookies = await this._driver.manage().getCookies() as Cookie[];
       return cookies;
     };
-    return runAction(action, taskOptions, sharedResults, this._driver);
+    return runAction(action, this._taskOptions,
+      this._sharedResults, this._driver);
   }
 
   /**
    * Retrieves a list of all available window handles.
-   * @param taskOptions Optional options for retries and functionHooks.
-   * @param sharedResults Optional shared results to help debugging.
    * @return A promise to the array of window handles.
    */
-  async getAllWindowHandles(taskOptions: TaskOptions = TASK_OPTIONS,
-      sharedResults: SharedResults = SHARED_RESULTS): Promise<string[]> {
+  async getAllWindowHandles(): Promise<string[]> {
+    this._sharedResults = sharedResultsInit();
+    this._taskOptions = taskOptionsInit();
     const action = async (): Promise<string[]> => {
       const handles = await this._driver.getAllWindowHandles();
       return handles;
     };
-    return runAction(action, taskOptions, sharedResults, this._driver);
+    return runAction(action, this._taskOptions,
+      this._sharedResults, this._driver);
   }
 
   /**
    * Gets the capabilities.
-   * @param taskOptions Optional options for retries and functionHooks.
-   * @param sharedResults Optional shared results to help debugging.
    * @return A promise to this session's capabilities.
    */
-  async getCapabilities(taskOptions: TaskOptions = TASK_OPTIONS,
-      sharedResults: SharedResults = SHARED_RESULTS): Promise<Capabilities> {
+  async getCapabilities(): Promise<Capabilities> {
+    this._sharedResults = sharedResultsInit();
+    this._taskOptions = taskOptionsInit();
     const action = async (): Promise<Capabilities> => {
       const capabilities = await this._driver.getCapabilities();
       return capabilities as Capabilities;
     };
-    return runAction(action, taskOptions, sharedResults, this._driver);
+    return runAction(action, this._taskOptions,
+      this._sharedResults, this._driver);
   }
 
   /**
    * Get the current url string (includes the http protocol).
-   * @param taskOptions Optional options for retries and functionHooks.
-   * @param sharedResults Optional shared results to help debugging.
    * @return A promise to the current url.
    */
-  async getCurrentUrl(
-      taskOptions: TaskOptions = TASK_OPTIONS,
-      sharedResults: SharedResults = SHARED_RESULTS): Promise<string> {
+  async getCurrentUrl(): Promise<string> {
+    this._sharedResults = sharedResultsInit();
+    this._taskOptions = taskOptionsInit();
     const action = async (): Promise<string> => {
       const currentUrl = await this._driver.getCurrentUrl();
       return currentUrl;
     };
-    return runAction(action, taskOptions, sharedResults, this._driver);
+    return runAction(action, this._taskOptions,
+      this._sharedResults, this._driver);
   }
 
   /**
    * Retrieves the current page's source. The returned souce is a representation
    * of the underlying DOM.
-   * @param taskOptions Optional options for retries and functionHooks.
-   * @param sharedResults Optional shared results to help debugging.
    * @return A promise to the current page source.
    */
-  async getPageSource(taskOptions: TaskOptions = TASK_OPTIONS,
-      sharedResults: SharedResults = SHARED_RESULTS) {
+  async getPageSource(): Promise<string> {
+    this._sharedResults = sharedResultsInit();
+    this._taskOptions = taskOptionsInit();
     const action = async (): Promise<string> => {
       const pageSource = await this._driver.getPageSource();
       return pageSource;
     };
-    return runAction(action, taskOptions, sharedResults, this._driver);
+    return runAction(action, this._taskOptions,
+      this._sharedResults, this._driver);
+  }
+
+  get sharedResults(): SharedResults {
+    return this._sharedResults;
   }
 
   /**
    * Gets the title value.
-   * @param taskOptions Optional options for retries and functionHooks.
-   * @param sharedResults Optional shared results to help debugging.
    * @return A promise to the title.
    */
-  async getTitle(taskOptions: TaskOptions = TASK_OPTIONS,
-      sharedResults: SharedResults = SHARED_RESULTS): Promise<string> {
+  async getTitle(): Promise<string> {
+    this._sharedResults = sharedResultsInit();
+    this._taskOptions = taskOptionsInit();
     const action = async (): Promise<string> => {
       return await this._driver.getTitle();
     };
-    return runAction(action, taskOptions, sharedResults, this._driver);
+    return runAction(action, this._taskOptions,
+      this._sharedResults, this._driver);
   }
 
   /**
    * Retrieves the current window handle.
-   * @param taskOptions Optional options for retries and functionHooks.
-   * @param sharedResults Optional shared results to help debugging.
    * @return A promise to the current window handle.
    */
-  async getWindowHandle(taskOptions: TaskOptions = TASK_OPTIONS,
-      sharedResults: SharedResults = SHARED_RESULTS): Promise<string> {
+  async getWindowHandle(): Promise<string> {
+    this._sharedResults = sharedResultsInit();
+    this._taskOptions = taskOptionsInit();
     const action = async (): Promise<string> => {
       const handle = await this._driver.getWindowHandle();
       return handle;
     };
-    return runAction(action, taskOptions, sharedResults, this._driver);
+    return runAction(action, this._taskOptions,
+      this._sharedResults, this._driver);
   }
 
   /**
@@ -255,85 +254,69 @@ export class Browser {
 
   /**
    * Moves backwards in the browser history.
-   * @param taskOptions Optional options for retries and functionHooks.
-   * @param sharedResults Optional shared results to help debugging.
    * @return A promise when completed.
    */
-  async navigateBack(taskOptions: TaskOptions = TASK_OPTIONS,
-      sharedResults: SharedResults = SHARED_RESULTS): Promise<void> {
-    sharedResults = sharedResultsInit(sharedResults);
-    taskOptions = taskOptionsInit(taskOptions);
-
-    if (taskOptions.useDefaults) {
-      taskOptions.tasks.before.local.push(taskHelpers.beforeUrl);
-
-      // order: check the document readyState then verify the page source
-      taskOptions.tasks.after.local.unshift(taskHelpers.afterUrl);
-      taskOptions.tasks.after.local.unshift(taskHelpers.afterPageSource);
-      taskOptions.tasks.after.local.unshift(
-          taskHelpers.afterDocumentReadyState);
+  async navigateBack(): Promise<void> {
+    this._sharedResults = sharedResultsInit();
+    this._taskOptions = taskOptionsInit();
+    if (this._taskOptions.useDefaults) {
+      let tasks = this._taskOptions.tasks;
+      tasks.before.local.push(taskHelpers.beforeUrl);
+      tasks.after.local.push(taskHelpers.afterUrl);
+      tasks.after.local.push(taskHelpers.afterPageSource);
+      tasks.after.local.push(taskHelpers.afterDocumentReadyState);
     }
-
     const action = async () => {
       await this._driver.navigate().back();
     };
-    await runAction(action, taskOptions, sharedResults, this._driver);
+    await runAction(action, this._taskOptions,
+      this._sharedResults, this._driver);
   }
 
   /**
    * Moves forwards in the browser history.
-   * @param taskOptions Optional options for retries and functionHooks.
-   * @param sharedResults Optional shared results to help debugging.
    * @return A promise when completed.
    */
-  async navigateForward(taskOptions: TaskOptions = TASK_OPTIONS,
-      sharedResults: SharedResults = SHARED_RESULTS): Promise<void> {
-    sharedResults = sharedResultsInit(sharedResults);
-    taskOptions = taskOptionsInit(taskOptions);
+  async navigateForward(): Promise<void> {
+    this._sharedResults = sharedResultsInit();
+    this._taskOptions = taskOptionsInit();
 
-    if (taskOptions.useDefaults) {
-      taskOptions.tasks.before.local.push(taskHelpers.beforeUrl);
-
-      // order: check the document readyState then verify the page source
-      taskOptions.tasks.after.local.unshift(taskHelpers.afterUrl);
-      taskOptions.tasks.after.local.unshift(taskHelpers.afterPageSource);
-      taskOptions.tasks.after.local.unshift(
-          taskHelpers.afterDocumentReadyState);
+    if (this._taskOptions.useDefaults) {
+      let tasks = this._taskOptions.tasks;
+      tasks.before.local.push(taskHelpers.beforeUrl);
+      tasks.after.local.push(taskHelpers.afterUrl);
+      tasks.after.local.push(taskHelpers.afterPageSource);
+      tasks.after.local.push(taskHelpers.afterDocumentReadyState);
     }
-
     const action = async () => {
       await this._driver.navigate().forward();
     };
-    await runAction(action, taskOptions, sharedResults, this._driver);
+    await runAction(action, this._taskOptions,
+      this._sharedResults, this._driver);
   }
 
   /**
    * Navigates to a new URL.
    * @param url The URL to navigate to.
-   * @param taskOptions Optional options for retries and functionHooks.
-   * @param sharedResults Optional shared results to help debugging.
    * @return A promise when completed.
    */
-  async navigateTo(url: string, taskOptions: TaskOptions = TASK_OPTIONS,
-      sharedResults: SharedResults = SHARED_RESULTS): Promise<void> {
-    sharedResults = sharedResultsInit(sharedResults);
-    taskOptions = taskOptionsInit(taskOptions);
-
-    if (taskOptions.useDefaults) {
-      taskOptions.tasks.before.local.push(taskHelpers.beforeUrl);
-
-      // order: check the document readyState then verify the page source
-      taskOptions.tasks.after.local.unshift(taskHelpers.afterUrl);
-      taskOptions.tasks.after.local.unshift(taskHelpers.afterPageSource);
-      taskOptions.tasks.after.local.unshift(
-          taskHelpers.afterDocumentReadyState);
+  async navigateTo(url: string): Promise<void> {
+    this._sharedResults = sharedResultsInit();
+    this._taskOptions = taskOptionsInit();
+    
+    if (this._taskOptions.useDefaults) {
+      let tasks = this._taskOptions.tasks;
+      tasks.before.local.push(taskHelpers.beforeUrl);
+      tasks.after.local.push(taskHelpers.afterUrl);
+      tasks.after.local.push(taskHelpers.afterPageSource);
+      tasks.after.local.push(taskHelpers.afterDocumentReadyState);
     }
-
     const action = async () => {
-      sharedResults.url = url;
+      this._sharedResults.url = url;
       await this._driver.navigate().to(url);
     };
-    await runAction(action, taskOptions, sharedResults, this._driver);
+    await runAction(action, this._taskOptions,
+      this._sharedResults, this._driver);
   }
 
   /**
@@ -346,103 +329,95 @@ export class Browser {
 
   /**
    * Refreshes the current page.
-   * @param taskOptions Optional options for retries and functionHooks.
-   * @param sharedResults Optional shared results to help debugging.
    * @return A promise when completed.
    */
-  async refresh(taskOptions: TaskOptions = TASK_OPTIONS,
-      sharedResults: SharedResults = SHARED_RESULTS): Promise<void> {
+  async refresh(): Promise<void> {
+    this._sharedResults = sharedResultsInit();
+    this._taskOptions = taskOptionsInit();
     const action = async () => {
       await this._driver.navigate().refresh();
     };
-    await runAction(action, taskOptions, sharedResults, this._driver);
+    await runAction(action, this._taskOptions,
+      this._sharedResults, this._driver);
   }
 
   /**
    * Makes the driver sleep for the given amount of time.
    * @param milliseconds The amount of time, in milliseconds, to sleep.
-   * @param taskOptions Optional options for retries and functionHooks.
-   * @param sharedResults Optional shared results to help debugging.
    * @return A promise when completed.
    */
-  async sleep(milliseconds: number, taskOptions: TaskOptions = TASK_OPTIONS,
-      sharedResults: SharedResults = SHARED_RESULTS): Promise<void> {
+  async sleep(milliseconds: number): Promise<void> {
+    this._sharedResults = sharedResultsInit();
+    this._taskOptions = taskOptionsInit();
     const action = async () => {
       await this._driver.sleep(milliseconds);
     };
-    await runAction(action, taskOptions, sharedResults, this._driver);
+    await runAction(action, this._taskOptions,
+      this._sharedResults, this._driver);
   }
 
   /**
    * Changes the focus of all future commands to another frame on the page. The
    * target frame may be specified as one of the following iframe or frame.
    * @param nameOrIndex The frame locator
-   * @param taskOptions Optional options for retries and functionHooks.
-   * @param sharedResults Optional shared results to help debugging.
    * @return A promise when completed.
    */
-  async switchToFrame(nameOrIndex: number|WebElement,
-      taskOptions: TaskOptions = TASK_OPTIONS,
-      sharedResults: SharedResults = SHARED_RESULTS): Promise<void> {
-    sharedResults = sharedResultsInit(sharedResults);
-    taskOptions = taskOptionsInit(taskOptions);
-
-    if (taskOptions.useDefaults) {
-      taskOptions.tasks.before.local.push(taskHelpers.beforeActiveWebElementId);
-      taskOptions.tasks.after.local.push(taskHelpers.afterActiveWebElementId);
+  async switchToFrame(nameOrIndex: number|WebElement): Promise<void> {
+    this._sharedResults = sharedResultsInit();
+    this._taskOptions = taskOptionsInit();
+    
+    if (this._taskOptions.useDefaults) {
+      let tasks = this._taskOptions.tasks;
+      tasks.before.local.push(taskHelpers.beforeActiveWebElementId);
+      tasks.after.local.push(taskHelpers.afterActiveWebElementId);
     }
     const action = async () => {
       await this._driver.switchTo().frame(nameOrIndex);
     };
-    await runAction(action, taskOptions, sharedResults, this._driver);
+    await runAction(action, this._taskOptions,
+      this._sharedResults, this._driver);
   }
 
   /**
    * Changes the focus of all future commands to the parent frame of the
    * currently selected frame. This command has no effect if the driver is
    * already focused on the top-level browsing context.
-   * @param taskOptions Optional options for retries and functionHooks.
-   * @param sharedResults Optional shared results to help debugging.
    * @return A promise when completed.
    */
-  async switchToParent(taskOptions: TaskOptions = TASK_OPTIONS,
-      sharedResults: SharedResults = SHARED_RESULTS): Promise<void> {
-    sharedResults = sharedResultsInit(sharedResults);
-    taskOptions = taskOptionsInit(taskOptions);
-
-    if (taskOptions.useDefaults) {
-      taskOptions.tasks.before.local.push(taskHelpers.beforeActiveWebElementId);
-      taskOptions.tasks.after.local.push(taskHelpers.afterActiveWebElementId);
+  async switchToParent(): Promise<void> {
+    this._sharedResults = sharedResultsInit();
+    this._taskOptions = taskOptionsInit();
+    if (this._taskOptions.useDefaults) {
+      let tasks = this._taskOptions.tasks;
+      tasks.before.local.push(taskHelpers.beforeActiveWebElementId);
+      tasks.after.local.push(taskHelpers.afterActiveWebElementId);
     }
     const action = async () => {
       // TODO(cnishina): fix when parent frame is supported.
       await (this._driver.switchTo() as any).parentFrame();
     };
-    await runAction(action, taskOptions, sharedResults, this._driver);
+    await runAction(action, this._taskOptions,
+      this._sharedResults, this._driver);
   }
 
   /**
    * Changes the focus of all future commands to another window.
    * @param nameOrHandle The name or window handle to switch focus to.
-   * @param taskOptions Optional options for retries and functionHooks.
-   * @param sharedResults Optional shared results to help debugging.
    * @return A promise when completed.
    */
-  async switchToWindow(nameOrHandle: string,  
-      taskOptions: TaskOptions = TASK_OPTIONS,
-      sharedResults: SharedResults = SHARED_RESULTS): Promise<void> {
-    sharedResults = sharedResultsInit(sharedResults);
-    taskOptions = taskOptionsInit(taskOptions);
-
-    if (taskOptions.useDefaults) {
-      taskOptions.tasks.before.local.push(taskHelpers.beforeWindowHandle);
-      taskOptions.tasks.after.local.push(taskHelpers.afterWindowHandle);
+  async switchToWindow(nameOrHandle: string): Promise<void> {
+    this._sharedResults = sharedResultsInit();
+    this._taskOptions = taskOptionsInit();
+    if (this._taskOptions.useDefaults) {
+      let tasks = this._taskOptions.tasks;
+      tasks.before.local.push(taskHelpers.beforeWindowHandle);
+      tasks.after.local.push(taskHelpers.afterWindowHandle);
     }
-    
     const action = async () => {
       await this._driver.switchTo().window(nameOrHandle);
     };
-    await runAction(action, taskOptions, sharedResults, this._driver);
+    await runAction(action, this._taskOptions,
+      this._sharedResults, this._driver);
   }
 
   /**
@@ -450,18 +425,18 @@ export class Browser {
    * bounding rectangle.
    * @param scroll Optional argument that indicates whether the element should
    *   be scrolled into view before taking a screenshot.
-   * @param taskOptions Optional options for retries and functionHooks.
-   * @param sharedResults Optional shared results to help debugging.
    * @return The screenshot as a base-64 encoded PNG.
    */
-  async takeScreenshot(scroll = false, taskOptions: TaskOptions = TASK_OPTIONS,
-      sharedResults: SharedResults = SHARED_RESULTS): Promise<string> {
+  async takeScreenshot(scroll = false): Promise<string> {
+    this._sharedResults = sharedResultsInit();
+    this._taskOptions = taskOptionsInit();
     const action = async () => {
       // TODO(cnishina): fix when screenshot scroll is supported.
       const content = await (this._driver as any).takeScreenshot(scroll);
       return content;
     };
-    return runAction(action, taskOptions, sharedResults, this._driver);
+    return runAction(action, this._taskOptions,
+      this._sharedResults, this._driver);
   }
   
   /**
@@ -472,14 +447,15 @@ export class Browser {
    */
   async wait(condition: () => boolean|Promise<boolean>,
       timeoutMilliseconds: number, message?: string,
-      pollMilliseconds?: number, taskOptions: TaskOptions = TASK_OPTIONS,
-      sharedResults: SharedResults = SHARED_RESULTS): Promise<void> {
-    
+      pollMilliseconds?: number): Promise<void> {
+    this._sharedResults = sharedResultsInit();
+    this._taskOptions = taskOptionsInit();
     const action = async () => {
       // TODO(cnishina): fix when wait takes 4 parameters.
       await (this._driver as any).wait(condition, timeoutMilliseconds,
           message, pollMilliseconds);
     };
-    return runAction(action, taskOptions, sharedResults, this._driver);
+    return runAction(action, this._taskOptions,
+      this._sharedResults, this._driver);
   }
 }

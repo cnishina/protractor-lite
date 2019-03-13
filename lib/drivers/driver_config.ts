@@ -1,4 +1,4 @@
-export interface RunnerConfig {
+export interface DriverConfig {
   capabilities?: Capabilities;
 
   /* The output directory where webdriver-manager saves the binaries. */

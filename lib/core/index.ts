@@ -1,8 +1,10 @@
 import { Browser, BrowserConfig } from './browser';
 import { By } from './by';
-import { buildElementHelper } from './element';
+import { buildElement, Element } from './element';
 
-export { BrowserConfig } from './browser';
+export { Browser, BrowserConfig } from './browser';
+export { By } from './by';
+export { Element, ElementArrayFinder, ElementFinder } from './element';
 
 /**
  * Builds the objects for protractor that use the same selenium browser session.
@@ -11,7 +13,7 @@ export { BrowserConfig } from './browser';
 export function build(config: BrowserConfig) {
   const browser = new Browser(config);
   const by = new By();
-  const element = buildElementHelper(browser.driver);
+  const element = buildElement(browser.driver);
   return {
     browser,
     by,
@@ -19,3 +21,8 @@ export function build(config: BrowserConfig) {
   };
 }
 
+export interface Protractor {
+  browser: Browser,
+  by: By,
+  element: Element
+}

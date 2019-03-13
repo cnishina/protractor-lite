@@ -20,8 +20,7 @@ ts_library(
         "@npm//@types/selenium-webdriver",
         "@npm//loglevel",
         "@npm//selenium-webdriver",
-        "@npm//webdriver-manager-replacement",
-        "//lib/runner:runner_config",
+        "@npm//webdriver-manager",
     ],
 )
 
@@ -36,7 +35,7 @@ ts_library(
         "@npm//@types/jasmine",
         "@npm//@types/node",
         "@npm//jasmine",
-        "@npm//webdriver-manager-replacement",
+        "@npm//webdriver-manager",
         ":driver_provider",
     ]
 )

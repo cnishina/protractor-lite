@@ -2,7 +2,8 @@
   "name": "protractor-lite",
   "version": "1.0.0",
   "description": "nothing to see here",
-  "main": "index.js",
+  "main": "dist/lib/index.js",
+  "types": "dist/lib/index.d.ts",
   "scripts": {
     "http-server": "npm run tsc && node dist/spec/server/http_server.js",
     "posttsc": "cp -r lib/core/client_side/ dist/lib/core/client_side/",

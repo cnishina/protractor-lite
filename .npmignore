@@ -1,0 +1,7 @@
+.circleci/
+dist/spec/
+dist/lib/**/*-spec.ts
+downloads/
+node_modules/
+web/
+yarn.lock

@@ -1,7 +1,7 @@
 import { Browser } from '../browser';
-import { buildElementHelper } from './index';
+import { buildElement } from './index';
 
-describe('buildElementHelper', () => {
+describe('buildElement', () => {
   let browser: Browser;
   beforeAll(() => {
     browser = new Browser({
@@ -11,12 +11,12 @@ describe('buildElementHelper', () => {
   });
 
   it('should build element function', () => {
-    const element = buildElementHelper(browser.driver);
+    const element = buildElement(browser.driver);
     expect(typeof element).toBe('function');
   });
 
   it('should build element function', () => {
-    const element = buildElementHelper(browser.driver);
+    const element = buildElement(browser.driver);
     expect(typeof element.all).toBe('function');
   });
 });

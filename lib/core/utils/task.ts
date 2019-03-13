@@ -131,5 +131,8 @@ export async function runAction<T>(action: () => Promise<T>,
     // successfully completed the before, action, and after.
     break;
   }
+  sharedResults.afterUtcTimestamp = new Date().getTime();
+  sharedResults.duration =
+      sharedResults.afterUtcTimestamp - sharedResults.beforeUtcTimestamp;
   return result;
 }

@@ -1,6 +1,6 @@
 import { WebElement, WebDriver } from 'selenium-webdriver';
 import { GetWebElements } from './get_web_elements';
-import { ElementHelper } from './';
+import { Element } from './';
 import { elementArrayFinderFactory, ElementArrayFinder } from './all';
 import { isProtractorLocator, Locator } from '../by/locator';
 import { Rectangle, runAction, SharedResults, TaskOptions } from '../utils';
@@ -107,9 +107,9 @@ export class ElementFinder {
     return runAction(action, taskOptions, sharedResults, this._driver);
   }
 
-  private buildElementHelper(
-      driver: WebDriver|WebElement|Promise<WebDriver|WebElement>): ElementHelper {
-    let element: ElementHelper = (locator: Locator): ElementFinder => {
+  private buildElement(
+      driver: WebDriver|WebElement|Promise<WebDriver|WebElement>): Element {
+    let element: Element = (locator: Locator): ElementFinder => {
       const getDriver = async(): Promise<WebElement> => {
         const webElements = await this._getWebElements();
         return webElements[0];
@@ -132,7 +132,7 @@ export class ElementFinder {
     return element;
   }
 
-  element = this.buildElementHelper(this._driver);
+  element = this.buildElement(this._driver);
 
   /**
    * Creates an ElementFinder from either the WebDriver or within a WebElement.

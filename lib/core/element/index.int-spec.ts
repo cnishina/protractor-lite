@@ -1,7 +1,7 @@
 import * as log from 'loglevel';
 import { By } from 'selenium-webdriver';
 import { Browser } from '../browser';
-import { buildElementHelper } from './index';
+import { buildElement } from './index';
 
 import * as env from '../../../spec/server/env';
 import { HttpServer } from '../../../spec/server/http_server';
@@ -53,7 +53,7 @@ describe('index', () => {
       });
 
       it('should click on an element', async () => {
-        let element = buildElementHelper(browser.driver);
+        let element = buildElement(browser.driver);
         await element(By.css('.nav-page2')).click();
         expect(await browser.driver.getCurrentUrl()).toBe(page2);
       });

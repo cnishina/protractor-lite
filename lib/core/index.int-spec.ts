@@ -5,7 +5,7 @@ import * as env from '../../spec/server/env';
 import { HttpServer } from '../../spec/server/http_server';
 import { startSession } from '../../spec/support/test_utils';
 import { Browser } from './browser';
-import { ElementHelper } from './element';
+import { Element } from './element';
 
 const origTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
 const page1 = `${env.httpBaseUrl}/spec/website/html/page1.html`;
@@ -21,7 +21,7 @@ const capabilities = {
 describe('protractor', () => {
   const seleniumAddress = 'http://127.0.0.1:4444/wd/hub';
   let browser: Browser;
-  let element: ElementHelper;
+  let element: Element;
 
   beforeAll(() => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;

@@ -1,0 +1,13 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "outDir": "../e2e-dist",
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "target": "es2017",
+    "lib": [ "es2017" ]
+  }
+}

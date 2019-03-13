@@ -1,16 +1,13 @@
 /**
  * Since these options is just an interface, initialize objects and create empty
  * arrays.
- * @param taskOptions The task options.
  * @return The initialized task options.
  */
-export function taskOptionsInit(taskOptions: TaskOptions): TaskOptions {
-  if (!taskOptions) {
-    taskOptions = {
-      retries: 1,
-      useDefaults: true,
-      validate: true,
-    };
+export function taskOptionsInit(): TaskOptions {
+  let taskOptions: TaskOptions = {
+    retries: 1,
+    validate: true,
+    useDefaults: true
   }
   if (!taskOptions.tasks) {
     taskOptions.tasks = {};

@@ -1,11 +1,11 @@
 import { Session, WebDriver, WebElement } from 'selenium-webdriver';
 import { Executor, HttpClient } from 'selenium-webdriver/http';
-import { BrowserConfig } from './browser_config';
+import { SeleniumConfig } from '../../utils/selenium_config';
 import { Locator } from '../by';
 import { ElementFinder, elementFinderFactory } from '../element/element_finder';
 import * as taskHelpers from '../utils/task_helpers';
 import { Capabilities, Cookie, runAction, SharedResults, sharedResultsInit, TaskOptions, taskOptionsInit } from '../utils';
-
+import { getDriver } from '../../utils/webdriver';
 
 export class Browser {
   protected _driver: WebDriver;
@@ -13,11 +13,8 @@ export class Browser {
   protected _taskOptions: TaskOptions;
   protected _sharedResults: SharedResults;
 
-  constructor(protected _browserConfig?: BrowserConfig) {
-    const httpClient = new HttpClient(this._browserConfig.seleniumAddress);
-    const executor = new Executor(httpClient);
-    this._session = new Session(this._browserConfig.seleniumSessionId, null);
-    this._driver = new WebDriver(this._session, executor);
+  constructor(protected _seleniumConfig?: SeleniumConfig) {
+    this._driver = getDriver(this._seleniumConfig);
   }
 
   /**

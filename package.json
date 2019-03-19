@@ -29,7 +29,9 @@
   },
   "homepage": "https://github.com/cnishina/protractor-pull-a-part#readme",
   "dependencies": {
+    "chalk": "^2.4.2",
     "loglevel": "^1.6.1",
+    "loglevel-plugin-prefix": "^0.8.4",
     "selenium-webdriver": "^4.0.0-alpha.1",
     "webdriver-manager": "13.0.0-beta"
   },

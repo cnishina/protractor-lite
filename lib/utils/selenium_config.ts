@@ -1,4 +1,4 @@
-export interface BrowserConfig {
+export interface SeleniumConfig {
   /**
    * The selenium address.
    * For a selenium standalone server, the default is:

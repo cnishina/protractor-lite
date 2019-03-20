@@ -1,6 +1,6 @@
 import { Session, WebDriver } from 'selenium-webdriver';
 import { Executor, HttpClient } from 'selenium-webdriver/http';
-import * as log from 'loglevel';
+import { log } from '../../utils/log';
 
 log.setLevel('debug');
 

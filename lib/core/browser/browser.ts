@@ -1,5 +1,4 @@
 import { Session, WebDriver, WebElement } from 'selenium-webdriver';
-import { Executor, HttpClient } from 'selenium-webdriver/http';
 import { SeleniumConfig } from '../../utils/selenium_config';
 import { Locator } from '../by';
 import { ElementFinder, elementFinderFactory } from '../element/element_finder';

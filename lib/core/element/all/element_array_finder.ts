@@ -1,5 +1,6 @@
 import { WebDriver, WebElement } from 'selenium-webdriver';
 import { GetWebElements } from '../get_web_elements';
+import { ElementFinder } from '../element_finder';
 import { isProtractorLocator, Locator } from '../../by/locator';
 
 export function elementArrayFinderFactory(
@@ -62,10 +63,21 @@ export class ElementArrayFinder {
   }
 
   /**
-   * Gets the web elements.
-   * @return Web elements.
+   * Gets the web element array.
+   * @return A promise of web elements.
    */
-  getWebElements(): Promise<WebElement[]> {
+  async getWebElements(): Promise<WebElement[]> {
     return this._getWebElements();
+  }
+
+  /**
+   * Gets the element finder array.
+   * @return A promise of element finders.
+   */
+  async getElementFinders(): Promise<ElementFinder[]> {
+    const arr = await this.getWebElements();
+    return Promise.all(arr.map((webElem: WebElement) => {
+      return ElementFinder.fromWebElement(webElem, this.locator);
+    }));
   }
 }

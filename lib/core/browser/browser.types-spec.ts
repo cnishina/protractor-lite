@@ -24,15 +24,16 @@ const WEBDRIVER = {
   instanceFunctions: [
     'actions',
     'close',
-    'executeAsyncScript',
-    'findElement',
-    'findElements', 
+    'executeScript',
+    // 'executeAsyncScript',  // Not needed?
+    // 'findElement',   // Not planning to implement.
+    // 'findElements',  // Not planning to implement.
     'get',
     'getAllWindowHandles',
     'getCapabilities',
     'getCurrentUrl',
     'getPageSource',
-    'getSession',
+    // 'getSession',  // Not planning to implement.
     'getTitle',
     'getWindowHandle',
     'manage',

@@ -33,7 +33,7 @@
     "loglevel": "^1.6.1",
     "loglevel-plugin-prefix": "^0.8.4",
     "selenium-webdriver": "^4.0.0-alpha.1",
-    "webdriver-manager": "13.0.0-beta"
+    "webdriver-manager": "13.0.0"
   },
   "devDependencies": {
     "@bazel/typescript": "^0.20.3",
